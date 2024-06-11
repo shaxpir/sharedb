@@ -4,6 +4,16 @@
   ![Test](https://github.com/share/sharedb/workflows/Test/badge.svg)
   [![Coverage Status](https://coveralls.io/repos/github/share/sharedb/badge.svg?branch=master)](https://coveralls.io/github/share/sharedb?branch=master)
 
++## Shaxpir: Why fork
++
++This fork introduces a new `DurableStore` module, which allows the client to persist docs and operations in the
++browser's `IndexedDB` storage. Since an individual user may have multiple offline docs, and have pending operations
++on any of those docs, the durable store gives a user the abillity to have their entire "working set" available
++while offline. They can even start and end their browsing session entirely offline, and their ops will sync to
++ShareDb someday when they eventually reconnect.
++
++## Introduction
+
 ShareDB is a realtime database backend based on [Operational Transformation
 (OT)](https://en.wikipedia.org/wiki/Operational_transformation) of JSON
 documents. It is the realtime backend for the [DerbyJS web application
