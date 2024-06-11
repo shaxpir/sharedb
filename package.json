@@ -22,6 +22,7 @@
     "rich-text": "^4.1.0",
     "sharedb-legacy": "npm:sharedb@1.1.0",
     "sinon": "^15.2.0",
+    "sinon-chai": "^3.7.0",
     "watchify": "^4.0.0"
   },
   "files": [
