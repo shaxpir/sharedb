@@ -22,7 +22,7 @@
     "rich-text": "^4.1.0",
     "sharedb-legacy": "npm:sharedb@1.1.0",
     "sinon": "^15.2.0",
-    "sinon-chai": "^3.7.0"
+    "watchify": "^4.0.0"
   },
   "files": [
     "lib/",
@@ -34,12 +34,14 @@
     "docs:start": "cd docs && bundle exec jekyll serve --livereload",
     "test": "mocha",
     "test-cover": "nyc --temp-dir=coverage -r text -r lcov npm test",
-    "lint": "./node_modules/.bin/eslint --ignore-path .gitignore '**/*.js'",
+    "build:test-browser": "browserify test/browser/tests.js -d -o test/browser/mocha.bundle.js",
+    "watch:test-browser": "watchify   test/browser/tests.js -d -o test/browser/mocha.bundle.js -v",
+    "lint": "eslint --ignore-path .gitignore \"**/*.js\"",
     "lint:fix": "npm run lint -- --fix"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/share/sharedb.git"
+    "url": "git://github.com/shaxpir/sharedb.git"
   },
   "author": "Nate Smith and Joseph Gentle",
   "license": "MIT"
