@@ -5,7 +5,7 @@ var types = require('../../lib/types');
 var deserializedType = require('./deserialized-type');
 var numberType = require('./number-type');
 var errorHandler = require('../util').errorHandler;
-var richText = require('rich-text');
+var richText = require('@shaxpir/rich-text');
 types.register(deserializedType.type);
 types.register(deserializedType.type2);
 types.register(numberType.type);
