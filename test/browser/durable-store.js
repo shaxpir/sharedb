@@ -8,7 +8,7 @@ var expect = require('chai').expect;
 var async = require('async');
 
 var types = require('../../lib/types');
-var json1 = require('ot-json1');
+var json1 = require('@shaxpir/ot-json1-presence');
 types.register(json1.type);
 
 const checkError = function(done, checkFunc) {
