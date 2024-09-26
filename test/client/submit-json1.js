@@ -1,6 +1,6 @@
 var expect = require('chai').expect;
 var types = require('../../lib/types');
-var json1Type = require('ot-json1');
+var json1Type = require('@shaxpir/ot-json1-presence');
 types.register(json1Type.type);
 
 module.exports = function() {
