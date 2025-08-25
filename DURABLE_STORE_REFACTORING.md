@@ -186,22 +186,80 @@ optimizeQuery(collection, query) // Transform query for optimization
 ### Example Strategies
 
 #### DefaultSchemaStrategy
-- Current behavior: single 'docs' table for all collections
-- Single 'meta' table for inventory
-- All-or-nothing encryption
+- Single 'docs' table for all collections
+- Single 'meta' table for metadata
+- **Inventory as JSON**: Single JSON document in meta table
+- All-or-nothing encryption (entire payload)
+- Suitable for: Small to medium applications, backward compatibility
 
 #### CollectionPerTableStrategy  
 - Separate table for each collection
-- Custom indexes per collection
-- Field-level encryption options
+- **Inventory as table**: Dedicated inventory table with indexes
+  - Each row represents one document
+  - Columns: collection, doc_id, version, updated_at
+  - Indexed for fast queries by collection or update time
+- Custom indexes per collection on JSON fields
+- Field-level encryption options per collection
 - Optimized queries per collection
+- Suitable for: Large-scale applications, better query performance
+
+### Inventory Representation Comparison
+
+| Aspect | JSON (DefaultStrategy) | Table (CollectionPerTableStrategy) |
+|--------|------------------------|-------------------------------------|
+| Storage | Single JSON document | Relational table with indexes |
+| Update Performance | O(n) - rewrite entire doc | O(1) - single row update |
+| Query Performance | Load entire inventory | SQL queries with WHERE clauses |
+| Scalability | Limited (large JSON) | Excellent (indexed table) |
+| Memory Usage | Entire inventory in memory | Stream results as needed |
+| Atomic Updates | Complex (read-modify-write) | Simple (SQL INSERT/UPDATE) |
 
 ### Implementation Plan
-1. Extract current schema logic into DefaultSchemaStrategy
-2. Define SchemaStrategy interface
-3. Update ExpoSqliteStorage to accept strategy via options
-4. Create example alternative strategies
-5. Add migration support between strategies
+1. ✅ Define SchemaStrategy interface
+2. ✅ Extract current schema logic into DefaultSchemaStrategy
+3. ✅ Create CollectionPerTableStrategy with table-based inventory
+4. ⏳ Update ExpoSqliteStorage to accept strategy via options
+5. ⏳ Add migration support between strategies
+
+### Usage Examples
+
+```javascript
+// Using DefaultSchemaStrategy (backward compatible)
+var DefaultSchemaStrategy = require('sharedb/lib/client/storage/schema/default-schema-strategy');
+var schemaStrategy = new DefaultSchemaStrategy({
+  useEncryption: true,
+  encryptionCallback: encrypt,
+  decryptionCallback: decrypt
+});
+
+var storage = new ExpoSqliteStorage({
+  dbFileName: 'sharedb.db',
+  schemaStrategy: schemaStrategy
+});
+
+// Using CollectionPerTableStrategy (optimized)
+var CollectionPerTableStrategy = require('sharedb/lib/client/storage/schema/collection-per-table-strategy');
+var schemaStrategy = new CollectionPerTableStrategy({
+  collectionConfig: {
+    'users': {
+      indexes: ['email', 'username'],
+      encryptedFields: ['password', 'personalInfo']
+    },
+    'posts': {
+      indexes: ['authorId', 'createdAt', 'tags'],
+      encryptedFields: []
+    }
+  },
+  useEncryption: true,
+  encryptionCallback: encrypt,
+  decryptionCallback: decrypt
+});
+
+var storage = new ExpoSqliteStorage({
+  dbFileName: 'sharedb.db',
+  schemaStrategy: schemaStrategy
+});
+```
 
 ## Progress Tracking
 
@@ -211,6 +269,7 @@ This document will be updated as work progresses. Current status:
 - Phase 2 (Storage Implementations): ✅ Complete (except SQLite async details)
 - Phase 3 (Integration): ✅ Complete
 - Phase 4 (Testing): ⏳ Pending
+- Phase 5 (Schema Strategies): 🔄 In Progress (architecture complete, integration pending)
 
 ## Commits Made
 1. `e423848` - Add refactoring plan document
@@ -218,3 +277,4 @@ This document will be updated as work progresses. Current status:
 3. `4340b86` - Fix bugs in ExpoSqliteStorage implementation
 4. `e88cfaf` - Update refactoring plan with progress
 5. `c7cd962` - Fix SQL injection vulnerabilities in ExpoSqliteStorage
+6. `146661b` - Add pluggable schema strategy architecture for ExpoSqliteStorage
