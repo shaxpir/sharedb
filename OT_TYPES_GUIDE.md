@@ -92,6 +92,116 @@ doc.submitOp(stringOps);
 - Real-time dashboards with multiple data fields
 - Any scenario requiring concurrent modification of JSON structures
 
+### JSON1 - Modern JSON Editing
+
+JSON1 is the successor to JSON0, designed with improved performance and better conflict resolution. It uses a more efficient operation format and provides better handling of concurrent edits.
+
+```typescript
+import json1 from 'ot-json1';
+
+// Register JSON1 type
+ShareDB.types.register(json1);
+
+// Create document with JSON1 type
+const doc = connection.get('projects', 'project1');
+
+const projectData = {
+  name: 'Mobile App',
+  team: {
+    lead: 'Sarah',
+    members: ['John', 'Alice', 'Bob'],
+    budget: 50000
+  },
+  milestones: [
+    { name: 'Design Phase', completed: true, dueDate: '2024-01-15' },
+    { name: 'Development', completed: false, dueDate: '2024-03-01' }
+  ],
+  metadata: {
+    created: '2024-01-01',
+    priority: 'high'
+  }
+};
+
+doc.create(projectData, json1.type, (error) => {
+  if (error) throw error;
+  console.log('Project created with JSON1 type');
+});
+```
+
+**JSON1 Operation Examples:**
+
+```typescript
+// JSON1 uses a different operation format than JSON0
+// Operations are more compact and efficient
+
+// Update nested object properties
+const updateOps = [
+  // Change project name
+  ['name', { r: 'Mobile App', i: 'Web Platform' }],
+  
+  // Update team budget
+  ['team', 'budget', { r: 50000, i: 75000 }],
+  
+  // Add new team member
+  ['team', 'members', 3, { i: 'Charlie' }],
+  
+  // Mark milestone as completed
+  ['milestones', 1, 'completed', { r: false, i: true }]
+];
+
+// Array operations with better performance
+const arrayOps = [
+  // Insert new milestone at position 2
+  ['milestones', 2, {
+    i: { 
+      name: 'Testing Phase', 
+      completed: false, 
+      dueDate: '2024-03-15' 
+    }
+  }],
+  
+  // Delete first milestone (now completed)
+  ['milestones', 0, { r: projectData.milestones[0] }]
+];
+
+// Atomic operations for complex changes
+const complexOps = [
+  // Simultaneously update multiple fields
+  ['metadata', {
+    priority: { r: 'high', i: 'critical' },
+    lastModified: { i: '2024-02-15' },
+    tags: { i: ['urgent', 'client-facing'] }
+  }]
+];
+
+// Apply operations
+doc.submitOp(updateOps);
+doc.submitOp(arrayOps);
+doc.submitOp(complexOps);
+```
+
+**JSON1 Advantages:**
+- **Better Performance**: More efficient operation format
+- **Improved Conflict Resolution**: Better handling of concurrent edits
+- **Type Safety**: Stronger guarantees about operation validity
+- **Backward Compatibility**: Can migrate from JSON0
+
+**JSON1 vs JSON0:**
+
+| Feature | JSON0 | JSON1 |
+|---------|-------|-------|
+| Operation Format | Path-based (p, oi, od) | Compact nested format |
+| Performance | Good | Excellent |
+| Conflict Resolution | Basic | Advanced |
+| Type Safety | Minimal | Enhanced |
+| Complexity | Simple | Moderate |
+
+**When to use JSON1:**
+- New projects requiring high-performance JSON collaboration
+- Applications with complex nested data structures
+- Scenarios with heavy concurrent editing
+- When migrating from JSON0 for better performance
+
 ### Rich Text - Advanced Text Editing
 
 Rich Text OT type handles formatted text with attributes like bold, italic, links, and custom styling. It's ideal for building collaborative editors like Google Docs or Notion.
@@ -129,10 +239,7 @@ const insertOps: ShareDB.RichTextOp[] = [
   { retain: 20 },
   
   // Insert bold text
-  { insert: ' Amazing', attributes: { bold: true } },
-  
-  // Keep rest of document
-  { retain: Infinity }
+  { insert: ' Amazing', attributes: { bold: true } }
 ];
 
 // Format existing text
@@ -140,9 +247,7 @@ const formatOps: ShareDB.RichTextOp[] = [
   { retain: 30 },
   
   // Make next 12 characters italic and add underline
-  { retain: 12, attributes: { italic: true, underline: true } },
-  
-  { retain: Infinity }
+  { retain: 12, attributes: { italic: true, underline: true } }
 ];
 
 // Delete text
@@ -150,9 +255,7 @@ const deleteOps: ShareDB.RichTextOp[] = [
   { retain: 50 },
   
   // Delete 10 characters
-  { delete: 10 },
-  
-  { retain: Infinity }
+  { delete: 10 }
 ];
 
 // Complex editing - replace text with different formatting
@@ -163,9 +266,7 @@ const complexOps: ShareDB.RichTextOp[] = [
   { delete: 13 }, // Remove 'collaborative'
   
   // Insert new formatted text
-  { insert: 'real-time', attributes: { bold: true, color: '#0066cc' } },
-  
-  { retain: Infinity }
+  { insert: 'real-time', attributes: { bold: true, color: '#0066cc' } }
 ];
 
 // Apply operations
@@ -222,10 +323,7 @@ const insertCode: ShareDB.TextOp[] = [
   { retain: 50 },
   
   // Insert memoization
-  { insert: '\n  // Memoization for performance\n  if (memo[n]) return memo[n];\n' },
-  
-  // Keep rest
-  { retain: Infinity }
+  { insert: '\n  // Memoization for performance\n  if (memo[n]) return memo[n];\n' }
 ];
 
 // Delete and replace function
@@ -243,9 +341,7 @@ const refactorOps: ShareDB.TextOp[] = [
     [a, b] = [b, a + b];
   }
   return b;
-}` },
-  
-  { retain: Infinity }
+}` }
 ];
 
 // Apply operations
