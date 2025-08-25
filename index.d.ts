@@ -537,6 +537,231 @@ declare namespace ShareDB {
   interface CollectionPerTableStrategyStatic {
     new (options: CollectionPerTableStrategyOptions): CollectionPerTableStrategy;
   }
+
+  // ===============================
+  // SharedWorker Proxy System
+  // ===============================
+
+  interface ProxyCapabilities {
+    hasSharedWorker: boolean;
+    hasBroadcastChannel: boolean;
+    hasIndexedDB: boolean;
+    canUseProxy: boolean;
+    userAgent: string;
+  }
+
+  interface MessageBrokerOptions {
+    channelName?: string;
+    debug?: boolean;
+  }
+
+  interface MessageBrokerStats {
+    tabId: string;
+    isReady: boolean;
+    queuedMessages: number;
+    pendingCallbacks: number;
+    channelName: string;
+  }
+
+  interface MessageBroker extends EventEmitter {
+    readonly tabId: string;
+    readonly channelName: string;
+    readonly debug: boolean;
+
+    send(message: any, callback?: Callback): void;
+    isReady(): boolean;
+    getStats(): MessageBrokerStats;
+    close(): void;
+    startCleanupTimer(interval?: number): void;
+    stopCleanupTimer(): void;
+  }
+
+  interface MessageBrokerStatic {
+    new (options?: MessageBrokerOptions): MessageBroker;
+  }
+
+  interface ProxyConnectionOptions {
+    channelName?: string;
+    debug?: boolean;
+    storage?: Storage;
+    durableStoreOptions?: DurableStoreOptions;
+  }
+
+  interface ProxyConnectionStats {
+    id: string;
+    state: string;
+    canSend: boolean;
+    cachedDocuments: number;
+    messageBroker: MessageBrokerStats;
+  }
+
+  interface ProxyConnection extends EventEmitter {
+    readonly id: string;
+    readonly state: string;
+    readonly canSend: boolean;
+    readonly collections: { [collection: string]: { [id: string]: ProxyDoc } };
+
+    // Document methods
+    get(collection: string, id: string): ProxyDoc;
+    getExisting(collection: string, id: string): ProxyDoc | undefined;
+    getBulk(collection: string, ids: string[], callback: Callback<ProxyDoc[]>): void;
+
+    // Batch writing control
+    setAutoFlush(enabled: boolean): void;
+    isAutoFlush(): boolean;
+    putDoc(doc: ProxyDoc, callback?: Callback): void;
+    putDocs(docs: ProxyDoc[], callback?: Callback): void;
+    putDocsBulk(docs: ProxyDoc[], callback?: Callback): void;
+    flushWrites(callback?: Callback): void;
+    getWriteQueueSize(): number;
+    hasPendingWrites(): boolean;
+
+    // Query methods (not yet implemented in proxy)
+    createQuery(collection: string, query: any, options?: QueryOptions): never;
+    createSubscribeQuery(collection: string, query: any, options?: QueryOptions, callback?: Callback<Query>): never;
+    createFetchQuery(collection: string, query: any, options?: QueryOptions, callback?: Callback<Query>): never;
+
+    // Presence methods (not yet implemented in proxy)
+    presence(channel: string): never;
+
+    // Statistics and debugging
+    getStats(): ProxyConnectionStats;
+    close(): void;
+  }
+
+  interface ProxyConnectionStatic {
+    new (options?: ProxyConnectionOptions): ProxyConnection;
+  }
+
+  interface ProxyDocStats {
+    collection: string;
+    id: string;
+    version: number | null;
+    type: string | null;
+    subscribed: boolean;
+    wantSubscribe: boolean;
+    hasPendingOps: boolean;
+    pendingOpsCount: number;
+    syncedWithSharedWorker: boolean;
+  }
+
+  interface ProxyDoc extends EventEmitter {
+    readonly connection: ProxyConnection;
+    readonly collection: string;
+    readonly id: string;
+    version: number | null;
+    type: string | null;
+    data: any;
+    subscribed: boolean;
+
+    // Subscription methods
+    subscribe(callback?: Callback): void;
+    unsubscribe(callback?: Callback): void;
+    fetch(callback?: Callback): void;
+
+    // Document operations
+    create(data: any, type?: string, options?: any, callback?: Callback): void;
+    submitOp(op: Op, source?: any, callback?: Callback): void;
+    del(source?: any, callback?: Callback): void;
+
+    // State methods
+    hasPendingOps(): boolean;
+    exists(): boolean;
+    getSnapshot(): { id: string; v: number | null; type: string | null; data: any };
+    clone(): any;
+    getKey(): string;
+
+    // Utility methods
+    flush(callback?: Callback): void;
+    pause(): void;
+    resume(): void;
+    getStats(): ProxyDocStats;
+    destroy(): void;
+  }
+
+  interface ProxyDocStatic {
+    new (connection: ProxyConnection, collection: string, id: string): ProxyDoc;
+  }
+
+  interface SharedWorkerManagerOptions {
+    debug?: boolean;
+    channelName?: string;
+    storage?: Storage;
+    durableStoreOptions?: DurableStoreOptions;
+    sharedWorkerPath?: string;
+  }
+
+  interface SharedWorkerManagerStats {
+    activeTabs: number;
+    documentSubscriptions: number;
+    connectionState: string;
+    durableStoreReady: boolean;
+  }
+
+  interface SharedWorkerManager {
+    readonly debug: boolean;
+    readonly channelName: string;
+
+    getStats(): SharedWorkerManagerStats;
+  }
+
+  interface SharedWorkerManagerStatic {
+    new (options?: SharedWorkerManagerOptions): SharedWorkerManager;
+  }
+
+  interface ConnectionFactoryOptions extends ProxyConnectionOptions {
+    useSharedWorker?: boolean;
+    forceProxy?: boolean;
+    forceDirect?: boolean;
+    sharedWorkerPath?: string;
+  }
+
+  interface ConnectionFactory {
+    createConnection(backendOrSocket?: any, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
+    createConnectionWithStorage(backendOrSocket: any, storage: Storage, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
+    isProxyConnection(connection: any): connection is ProxyConnection;
+    getProxyCapabilities(): ProxyCapabilities;
+    getConnectionStats(): { capabilities: ProxyCapabilities; timestamp: string };
+    createSharedWorkerScript(options?: { sharedbPath?: string; debug?: boolean; channelName?: string }): string;
+
+    // Convenience methods
+    create(backendOrSocket?: any, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
+    withStorage(backendOrSocket: any, storage: Storage, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
+  }
+
+  interface ProxySystem {
+    ConnectionFactory: ConnectionFactory;
+    ProxyConnection: ProxyConnectionStatic;
+    ProxyDoc: ProxyDocStatic;
+    MessageBroker: MessageBrokerStatic;
+    SharedWorkerManager: SharedWorkerManagerStatic;
+
+    // Convenience methods
+    createConnection(backendOrSocket?: any, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
+    createConnectionWithStorage(backendOrSocket: any, storage: Storage, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
+    isProxyConnection(connection: any): connection is ProxyConnection;
+    getProxyCapabilities(): ProxyCapabilities;
+    hasProxySupport(): boolean;
+    connect(backendOrSocket?: any, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
+    connectWithStorage(backendOrSocket: any, storage: Storage, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
+  }
+
+  // Static constructors for proxy system
+  interface ProxyConnectionStatic {
+    new (options?: ProxyConnectionOptions): ProxyConnection;
+  }
+
+  interface ProxyDocStatic {
+    new (connection: ProxyConnection, collection: string, id: string): ProxyDoc;
+  }
+
+  interface MessageBrokerStatic {
+    new (options?: MessageBrokerOptions): MessageBroker;
+  }
+
+  interface SharedWorkerManagerStatic {
+    new (options?: SharedWorkerManagerOptions): SharedWorkerManager;
+  }
 }
 
 // ===============================
@@ -568,6 +793,14 @@ declare namespace ShareDB {
   export const Connection: ConnectionStatic;
   export const Doc: DocStatic; 
   export const Query: QueryStatic;
+  
+  // SharedWorker Proxy System
+  export const proxy: ProxySystem;
+  export const ProxyConnection: ProxyConnectionStatic;
+  export const ProxyDoc: ProxyDocStatic;
+  export const MessageBroker: MessageBrokerStatic;
+  export const SharedWorkerManager: SharedWorkerManagerStatic;
+  export const ConnectionFactory: ConnectionFactory;
 }
 
 export = ShareDB;
