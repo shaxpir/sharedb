@@ -4,11 +4,11 @@
 import ShareDB from '../index';
 import { 
   DurableStore,
-  SqliteStorage,
-  ExpoSqliteAdapter,
-  CollectionPerTableStrategy,
+  InMemoryStorage,
   Types
 } from '../lib/client/storage/index';
+// Note: SQLite storage components are now in @shaxpir/sharedb-storage-expo-sqlite:
+// import { SqliteStorage, ExpoSqliteAdapter, CollectionPerTableStrategy } from '@shaxpir/sharedb-storage-expo-sqlite';
 
 // ===============================
 // Server-side Example

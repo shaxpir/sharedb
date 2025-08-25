@@ -14,9 +14,10 @@
 var ShareDB = require('../lib/sharedb');
 var Connection = require('../lib/client/connection');
 var DurableStore = require('../lib/client/durable-store');
-var SqliteStorage = require('../lib/client/storage/sqlite-storage');
-var CollectionPerTableStrategy = require('../lib/client/storage/schema/collection-per-table-strategy');
-var ExpoSqliteAdapter = require('../lib/client/storage/adapters/expo-sqlite-adapter');
+// Note: SQLite storage components are now in @shaxpir/sharedb-storage-expo-sqlite
+// var { SqliteStorage, CollectionPerTableStrategy, ExpoSqliteAdapter } = require('@shaxpir/sharedb-storage-expo-sqlite');
+// For this example, we'll use in-memory storage instead:
+var InMemoryStorage = require('../lib/client/storage/in-memory-storage');
 
 // ===============================
 // Setup for Batch Writing Demo
