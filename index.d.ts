@@ -15,29 +15,49 @@ declare namespace ShareDB {
   interface JsonArray extends Array<Json> {}
   interface JsonObject { [key: string]: Json }
 
-  interface Op {
-    p: (string | number)[];
-    od?: any;
-    oi?: any;
-    na?: number;
-    li?: any;
-    ld?: any;
-    lm?: number;
-    si?: string;
-    sd?: string;
-    t?: string;
+  // Base operation type - operations are type-specific and vary by OT implementation
+  type Op = any;
+
+  // JSON0 Operations (for reference, but Op should remain generic)
+  interface Json0Op {
+    p: (string | number)[]; // Path
+    od?: any; // Old data (object delete)
+    oi?: any; // Object insert
+    na?: number; // Number add
+    li?: any; // List insert  
+    ld?: any; // List delete
+    lm?: number; // List move
+    si?: string; // String insert
+    sd?: string; // String delete
+    t?: string; // Subtype
+  }
+
+  // Rich Text Operations (for reference)
+  interface RichTextOp {
+    retain?: number;
+    insert?: string | object;
+    delete?: number;
+    attributes?: { [key: string]: any };
+  }
+
+  // Text Operations (for reference)
+  interface TextOp {
+    retain?: number;
+    insert?: string;
+    delete?: number;
   }
 
   interface RawOp {
     src?: string;
     seq?: number;
     v?: number;
-    op?: Op[];
+    op?: Op[]; // Type-specific operations array
     create?: {
-      type: string;
+      type: string; // OT type name (e.g., 'json0', 'rich-text', 'text')
       data?: any;
     };
     del?: boolean;
+    m?: { [key: string]: any }; // Metadata
   }
 
   interface Snapshot {
@@ -65,6 +85,35 @@ declare namespace ShareDB {
 
   type Callback<T = any> = (error: ShareDBError | null, result?: T) => void;
   type OpCallback = (error: ShareDBError | null) => void;
+
+  // ===============================
+  // OT Type System
+  // ===============================
+
+  interface OTType {
+    name: string;
+    uri: string;
+    create(snapshot?: any): any;
+    apply(snapshot: any, op: Op[]): any;
+    compose(op1: Op[], op2: Op[]): Op[];
+    transform(op1: Op[], op2: Op[], priority: 'left' | 'right'): Op[];
+    invert?(op: Op[]): Op[];
+    normalize?(op: Op[]): Op[];
+    transformPresence?(presence: any, op: Op[], isOwn: boolean): any;
+    serialize?(snapshot: any): any;
+    deserialize?(snapshot: any): any;
+    diff?(oldSnapshot: any, newSnapshot: any): Op[];
+  }
+
+  interface OTTypeMap {
+    [typeName: string]: OTType;
+  }
+
+  interface TypesModule {
+    defaultType: OTType;
+    map: OTTypeMap;
+    register(type: OTType): void;
+  }
 
   // ===============================
   // Backend Types
@@ -491,7 +540,7 @@ declare class ShareDB extends ShareDB.Backend {
   static PubSub: any;
   static QueryEmitter: any;
   static SubmitRequest: any;
-  static types: any;
+  static types: TypesModule;
 }
 
 declare namespace ShareDB {

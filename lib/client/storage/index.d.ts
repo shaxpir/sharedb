@@ -4,12 +4,15 @@
 
 import { EventEmitter } from 'events';
 
+// Import main ShareDB types for OT operations
+import { ShareDBError, Op, Json0Op, RichTextOp, TextOp, OTType } from '../../index';
+
 declare namespace ShareDBStorage {
   // ===============================
   // Core Storage Types
   // ===============================
 
-  type Callback<T = any> = (error: Error | null, result?: T) => void;
+  type Callback<T = any> = (error: ShareDBError | null, result?: T) => void;
 
   interface StorageRecord {
     id: string;
@@ -40,7 +43,7 @@ declare namespace ShareDBStorage {
   interface DurableStoreOptions {
     maxBatchSize?: number;
     extVersionDecoder?: (data: any) => string | number;
-    opErrorCallback?: (error: Error) => void;
+    opErrorCallback?: (error: ShareDBError) => void;
     debug?: boolean;
   }
 

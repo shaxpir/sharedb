@@ -157,8 +157,8 @@ async function demonstrateDocumentOperations(connection: ShareDB.Connection): Pr
     });
   }
 
-  // Update document with operational transforms
-  const updateOps: ShareDB.Op[] = [
+  // JSON0 operational transforms (default ShareDB type)
+  const json0UpdateOps: ShareDB.Json0Op[] = [
     {
       p: ['preferences', 'theme'],
       od: 'light',
@@ -171,8 +171,9 @@ async function demonstrateDocumentOperations(connection: ShareDB.Connection): Pr
     }
   ];
 
+  // All OT types are compatible with ShareDB.Op (which is 'any')
   await new Promise<void>((resolve, reject) => {
-    profileDoc.submitOp(updateOps, (error) => {
+    profileDoc.submitOp(json0UpdateOps, (error) => {
       if (error) {
         reject(error);
       } else {
@@ -180,6 +181,24 @@ async function demonstrateDocumentOperations(connection: ShareDB.Connection): Pr
       }
     });
   });
+
+  // Rich Text operations example (if using rich-text type)
+  if (profileDoc.type?.name === 'rich-text') {
+    const richTextOps: ShareDB.RichTextOp[] = [
+      { retain: 5 },
+      { insert: 'Hello ' },
+      { retain: 3 },
+      { insert: 'World', attributes: { bold: true } }
+    ];
+    
+    // Also compatible with ShareDB.Op
+    await new Promise<void>((resolve, reject) => {
+      profileDoc.submitOp(richTextOps, (error) => {
+        if (error) reject(error);
+        else resolve();
+      });
+    });
+  }
 
   console.log('Profile updated:', profileDoc.data);
 }

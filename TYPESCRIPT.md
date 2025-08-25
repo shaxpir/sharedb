@@ -182,7 +182,73 @@ interface BlogPost {
 }
 ```
 
-### Type-Safe Operations
+### Working with Different OT Types
+
+ShareDB supports pluggable OT (Operational Transform) types. The `Op` type is intentionally generic (`any`) to accommodate all OT implementations:
+
+```typescript
+// JSON0 operations (default)
+const json0Ops: ShareDB.Json0Op[] = [
+  { p: ['name'], od: 'John', oi: 'Jane' },
+  { p: ['age'], na: 1 },
+  { p: ['tags'], li: 'new-tag' }
+];
+
+// Rich Text operations  
+const richTextOps: ShareDB.RichTextOp[] = [
+  { retain: 5 },
+  { insert: 'Hello' },
+  { delete: 3 },
+  { insert: 'World', attributes: { bold: true } }
+];
+
+// Text operations
+const textOps: ShareDB.TextOp[] = [
+  { retain: 10 },
+  { insert: 'new text' },
+  { delete: 5 }
+];
+
+// Using operations (all are compatible with ShareDB.Op)
+doc.submitOp(json0Ops);      // Works
+doc.submitOp(richTextOps);   // Works  
+doc.submitOp(textOps);       // Works
+```
+
+### Registering Custom OT Types
+
+```typescript
+// Register a custom OT type
+const customType: ShareDB.OTType = {
+  name: 'my-custom-type',
+  uri: 'http://example.com/my-custom-type',
+  
+  create: (initialData?) => initialData || {},
+  
+  apply: (snapshot, ops) => {
+    // Apply operations to snapshot
+    return newSnapshot;
+  },
+  
+  compose: (op1, op2) => {
+    // Compose two operations
+    return composedOp;
+  },
+  
+  transform: (op1, op2, priority) => {
+    // Transform op1 against op2
+    return transformedOp;
+  }
+};
+
+// Register with ShareDB
+ShareDB.types.register(customType);
+
+// Use in document creation
+doc.create(initialData, 'my-custom-type');
+```
+
+### Type-Safe Document Operations
 
 ```typescript
 // Create document with typed data
