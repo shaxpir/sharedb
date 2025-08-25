@@ -6,7 +6,7 @@
 
 ## Shaxpir: Enhanced ShareDB with DurableStore
 
-This is the **Shaxpir fork** of ShareDB, which introduces a new **DurableStore** system for offline-first client persistence. The DurableStore allows clients to persist documents and operations in the browser's IndexedDB storage, enabling:
+This is the **Shaxpir fork** of ShareDB, which introduces a new **DurableStore** system for offline-first client persistence. The DurableStore allows clients to persist documents and operations using pluggable storage adapters, enabling:
 
 - **Complete offline capability** - Users can work entirely offline, with operations queued for sync upon reconnection
 - **Multi-document working sets** - Persist multiple documents with pending operations across browsing sessions  
@@ -50,11 +50,11 @@ tracker](https://github.com/shaxpir/sharedb/issues).
 
 ## React Native Support
 
-For React Native applications using the **DurableStore** system, use the dedicated package:
+For React Native applications using the **DurableStore** system, use the dedicated storage adapter:
 
-- **[@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite)** - Expo SQLite storage adapter specifically designed for DurableStore offline persistence
+- **[@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite)** - Expo SQLite storage adapter for DurableStore's pluggable storage architecture
 
-This package provides **DurableStore integration** with:
+This storage adapter provides **DurableStore integration** with:
 - Client-side document persistence using Expo SQLite
 - Offline operation queuing and automatic sync
 - Pre-initialized database support for complex architectures  
@@ -63,7 +63,10 @@ This package provides **DurableStore integration** with:
 - Cross-database queries for analytics
 - Zero bundling conflicts with browser/Node.js apps
 
-The React Native storage package enables the full DurableStore offline-first experience on mobile platforms.
+**DurableStore Storage Architecture**:
+- **Browser**: Built-in IndexedDB storage adapter (default)
+- **React Native**: Expo SQLite storage adapter (via separate package)
+- **Custom**: Third-party storage adapters can be implemented for any persistence backend
 
 ## Documentation
 
