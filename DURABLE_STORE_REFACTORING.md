@@ -303,6 +303,20 @@ var storage = new SqliteStorage({
 });
 ```
 
+### Testing Requirements
+
+To run the SQLite storage tests in Node.js, install one of:
+```bash
+npm install --save-dev better-sqlite3  # Recommended (faster, synchronous)
+# OR
+npm install --save-dev sqlite3         # Alternative (async, wider compatibility)
+```
+
+Run tests with:
+```bash
+npm test test/client/storage/sqlite-storage-test.js
+```
+
 ## Progress Tracking
 
 This document will be updated as work progresses. Current status:
