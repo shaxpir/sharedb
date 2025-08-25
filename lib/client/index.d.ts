@@ -2,15 +2,12 @@
 // Project: https://github.com/share/sharedb
 // Definitions by: Claude Code <https://claude.ai/code>
 
-export * from '../../index';
+import ShareDB from '../../index';
 
-// Re-export client-specific classes for easier importing
-import { 
-  Connection as ConnectionClass,
-  Doc as DocClass,
-  Query as QueryClass
-} from '../../index';
+// Re-export the main ShareDB class as default
+export = ShareDB;
 
-export const Connection: typeof ConnectionClass;
-export const Doc: typeof DocClass;
-export const Query: typeof QueryClass;
+// Named exports for client-specific classes
+export const Connection: ShareDB.ConnectionStatic;
+export const Doc: ShareDB.DocStatic;
+export const Query: ShareDB.QueryStatic;

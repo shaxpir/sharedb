@@ -657,7 +657,10 @@ declare namespace ShareDB {
 // Main ShareDB Module Declaration
 // ===============================
 
-declare class ShareDB extends ShareDB.Backend {
+// Alias to avoid circular reference
+type ShareDBBackend = ShareDB.Backend;
+
+declare class ShareDB extends ShareDBBackend {
   constructor(options?: ShareDB.BackendOptions);
 
   static Agent: any;
@@ -675,7 +678,7 @@ declare class ShareDB extends ShareDB.Backend {
   static PubSub: any;
   static QueryEmitter: any;
   static SubmitRequest: any;
-  static types: TypesModule;
+  static types: ShareDB.TypesModule;
 }
 
 declare namespace ShareDB {
