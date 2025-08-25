@@ -1,6 +1,6 @@
 {
   "name": "@shaxpir/sharedb",
-  "version": "5.4.0",
+  "version": "6.0.0",
   "description": "JSON OT database backend",
   "main": "lib/index.js",
   "types": "index.d.ts",
@@ -16,8 +16,6 @@
     "@shaxpir/rich-text": "^5.0.2",
     "chai": "^4.3.7",
     "coveralls": "^3.1.1",
-    "eslint": "^8.47.0",
-    "eslint-config-google": "^0.14.0",
     "fake-indexeddb": "^6.1.0",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
@@ -39,9 +37,7 @@
     "test": "mocha",
     "test-cover": "nyc --temp-dir=coverage -r text -r lcov npm test",
     "build:test-browser": "browserify test/browser/tests.js -d -o test/browser/mocha.bundle.js",
-    "watch:test-browser": "watchify   test/browser/tests.js -d -o test/browser/mocha.bundle.js -v",
-    "lint": "eslint --ignore-path .gitignore \"**/*.js\"",
-    "lint:fix": "npm run lint -- --fix"
+    "watch:test-browser": "watchify   test/browser/tests.js -d -o test/browser/mocha.bundle.js -v"
   },
   "repository": {
     "type": "git",

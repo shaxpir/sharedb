@@ -10,10 +10,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build:test-browser` - Build browser tests (required before running browser tests)
 - `npm run watch:test-browser` - Watch and rebuild browser tests during development
 
-### Linting
-- `npm run lint` - Check code style (must pass before committing)
-- `npm run lint:fix` - Auto-fix linting issues
-
 ### Documentation
 - `npm run docs:start` - Start local documentation server at http://localhost:4000
 
@@ -86,4 +82,3 @@ Third parties can implement custom storage adapters by implementing the DurableS
 - **Event-Driven**: Heavy use of EventEmitter pattern throughout
 - **Middleware**: Operations can be intercepted via middleware hooks
 - **Testing**: Comprehensive test suite - always run tests before committing
-- **Linting**: Code must pass `npm run lint` (Google style with modifications)
