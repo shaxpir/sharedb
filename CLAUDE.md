@@ -10,10 +10,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build:test-browser` - Build browser tests (required before running browser tests)
 - `npm run watch:test-browser` - Watch and rebuild browser tests during development
 
-### Linting
-- `npm run lint` - Check code style (must pass before committing)
-- `npm run lint:fix` - Auto-fix linting issues
-
 ### Documentation
 - `npm run docs:start` - Start local documentation server at http://localhost:4000
 
@@ -56,11 +52,29 @@ ShareDB uses adapters for pluggability:
 ### Shaxpir Fork Features
 
 **DurableStore** (`lib/client/durable-store.js`):
-- Uses IndexedDB for offline document persistence
+- Pluggable storage architecture supporting multiple persistence layers
+- Built-in IndexedDB storage for browser environments
 - Queues operations when offline
 - Supports encryption callbacks
 - Automatically syncs on reconnection
-- Enabled via `connection.useDurableStore({encryptionKey: ...})`
+- Enabled via `connection.useDurableStore({storage: storageAdapter})`
+
+**ProxyConnection & Multi-tab Safety** (`lib/client/proxy-connection.js`):
+- MessageBroker system for coordinating multiple browser tabs
+- Prevents DurableStore conflicts in multi-tab environments
+- Enables safe shared storage across tabs with coordinated sync
+- SharedWorker-based inter-tab communication
+
+**Available Storage Adapters**:
+- **Built-in IndexedDB Storage** (`lib/client/storage/indexed-db-storage.js`) - Default browser storage
+- **[@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite)** - React Native SQLite storage with:
+  - Dual-database architecture support
+  - Connection pooling capabilities  
+  - Cross-database query support
+  - Zero bundling conflicts with browser/Node.js environments
+
+**Custom Storage Adapters**:
+Third parties can implement custom storage adapters by implementing the DurableStore storage interface, enabling persistence to any storage backend (filesystem, cloud storage, etc.).
 
 ### Key Development Notes
 
@@ -68,4 +82,3 @@ ShareDB uses adapters for pluggability:
 - **Event-Driven**: Heavy use of EventEmitter pattern throughout
 - **Middleware**: Operations can be intercepted via middleware hooks
 - **Testing**: Comprehensive test suite - always run tests before committing
-- **Linting**: Code must pass `npm run lint` (Google style with modifications)

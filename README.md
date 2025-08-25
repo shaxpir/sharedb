@@ -1,18 +1,23 @@
 # ShareDB
 
   [![NPM Version](https://img.shields.io/npm/v/sharedb.svg)](https://npmjs.org/package/sharedb)
-  ![Test](https://github.com/share/sharedb/workflows/Test/badge.svg)
-  [![Coverage Status](https://coveralls.io/repos/github/share/sharedb/badge.svg?branch=master)](https://coveralls.io/github/share/sharedb?branch=master)
+  ![Test](https://github.com/shaxpir/sharedb/workflows/Test/badge.svg)
+  [![Coverage Status](https://coveralls.io/repos/github/shaxpir/sharedb/badge.svg?branch=master)](https://coveralls.io/github/shaxpir/sharedb?branch=master)
 
-+## Shaxpir: Why fork
-+
-+This fork introduces a new `DurableStore` module, which allows the client to persist docs and operations in the
-+browser's `IndexedDB` storage. Since an individual user may have multiple offline docs, and have pending operations
-+on any of those docs, the durable store gives a user the abillity to have their entire "working set" available
-+while offline. They can even start and end their browsing session entirely offline, and their ops will sync to
-+ShareDb someday when they eventually reconnect.
-+
-+## Introduction
+## Shaxpir: Enhanced ShareDB with DurableStore
+
+This is the **Shaxpir fork** of ShareDB, which introduces a new **DurableStore** system for offline-first client persistence. The DurableStore allows clients to persist documents and operations using pluggable storage adapters, enabling:
+
+- **Complete offline capability** - Users can work entirely offline, with operations queued for sync upon reconnection
+- **Multi-document working sets** - Persist multiple documents with pending operations across browsing sessions  
+- **Transparent operation sync** - Offline operations automatically sync to ShareDB when connectivity returns
+- **Client-side persistence** - Documents remain available even after closing and reopening the application
+- **Multi-tab safety** - ProxyConnection with MessageBroker enables safe DurableStore usage across multiple browser tabs
+- **Enhanced TypeScript support** - Comprehensive type definitions for DurableStore, storage adapters, and client APIs
+
+The DurableStore system is a **unique enhancement** not available in the original upstream ShareDB, specifically designed for offline-first collaborative applications.
+
+## Introduction
 
 ShareDB is a realtime database backend based on [Operational Transformation
 (OT)](https://en.wikipedia.org/wiki/Operational_transformation) of JSON
@@ -24,7 +29,7 @@ list](https://groups.google.com/forum/?fromgroups#!forum/sharejs) or [read the d
 ).
 
 Please report any bugs you find to the [issue
-tracker](https://github.com/share/sharedb/issues).
+tracker](https://github.com/shaxpir/sharedb/issues).
 
 ## Features
 
@@ -38,9 +43,32 @@ tracker](https://github.com/share/sharedb/issues).
  - Middleware for implementing access control and custom extensions
  - Ideal for use in browsers or on the server
  - Offline change syncing upon reconnection
+ - **Bulk document operations** for efficient multi-document loading and writing
+ - **Advanced offline persistence** with DurableStore and pluggable storage layers
+ - **Caller-controlled batch writing** with auto-flush control
  - In-memory implementations of database and pub/sub for unit testing
  - Access to historic document versions
  - Realtime user presence syncing
+
+## React Native Support
+
+For React Native applications using the **DurableStore** system, use the dedicated storage adapter:
+
+- **[@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite)** - SQLite storage adapter for React Native/Expo applications
+
+This storage adapter provides **DurableStore integration** with:
+- Client-side document persistence using SQLite in React Native
+- Offline operation queuing and automatic sync
+- Pre-initialized database support for complex architectures  
+- Dual-database integration (builtin + userdata schemas)
+- Connection pooling with dependency injection
+- Cross-database queries for analytics
+- Zero bundling conflicts with browser/Node.js apps
+
+**DurableStore Storage Architecture**:
+- **Browser**: Built-in IndexedDB storage adapter (default)
+- **React Native**: SQLite storage adapter (via separate package)
+- **Custom**: Third-party storage adapters can be implemented for any persistence backend
 
 ## Documentation
 
