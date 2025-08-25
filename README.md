@@ -1,18 +1,21 @@
 # ShareDB
 
   [![NPM Version](https://img.shields.io/npm/v/sharedb.svg)](https://npmjs.org/package/sharedb)
-  ![Test](https://github.com/share/sharedb/workflows/Test/badge.svg)
-  [![Coverage Status](https://coveralls.io/repos/github/share/sharedb/badge.svg?branch=master)](https://coveralls.io/github/share/sharedb?branch=master)
+  ![Test](https://github.com/shaxpir/sharedb/workflows/Test/badge.svg)
+  [![Coverage Status](https://coveralls.io/repos/github/shaxpir/sharedb/badge.svg?branch=master)](https://coveralls.io/github/shaxpir/sharedb?branch=master)
 
-+## Shaxpir: Why fork
-+
-+This fork introduces a new `DurableStore` module, which allows the client to persist docs and operations in the
-+browser's `IndexedDB` storage. Since an individual user may have multiple offline docs, and have pending operations
-+on any of those docs, the durable store gives a user the abillity to have their entire "working set" available
-+while offline. They can even start and end their browsing session entirely offline, and their ops will sync to
-+ShareDb someday when they eventually reconnect.
-+
-+## Introduction
+## Shaxpir: Enhanced ShareDB with DurableStore
+
+This is the **Shaxpir fork** of ShareDB, which introduces a new **DurableStore** system for offline-first client persistence. The DurableStore allows clients to persist documents and operations in the browser's IndexedDB storage, enabling:
+
+- **Complete offline capability** - Users can work entirely offline, with operations queued for sync upon reconnection
+- **Multi-document working sets** - Persist multiple documents with pending operations across browsing sessions  
+- **Transparent operation sync** - Offline operations automatically sync to ShareDB when connectivity returns
+- **Client-side persistence** - Documents remain available even after closing and reopening the application
+
+The DurableStore system is a **unique enhancement** not available in the original upstream ShareDB, specifically designed for offline-first collaborative applications.
+
+## Introduction
 
 ShareDB is a realtime database backend based on [Operational Transformation
 (OT)](https://en.wikipedia.org/wiki/Operational_transformation) of JSON
@@ -24,7 +27,7 @@ list](https://groups.google.com/forum/?fromgroups#!forum/sharejs) or [read the d
 ).
 
 Please report any bugs you find to the [issue
-tracker](https://github.com/share/sharedb/issues).
+tracker](https://github.com/shaxpir/sharedb/issues).
 
 ## Features
 
@@ -47,16 +50,20 @@ tracker](https://github.com/share/sharedb/issues).
 
 ## React Native Support
 
-For React Native applications, use the dedicated package:
+For React Native applications using the **DurableStore** system, use the dedicated package:
 
-- **[@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite)** - Expo SQLite storage with dual-database and connection pooling support
+- **[@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite)** - Expo SQLite storage adapter specifically designed for DurableStore offline persistence
 
-This provides:
-- Pre-initialized database support for complex database architectures
-- Dual-database integration (builtin + userdata)
+This package provides **DurableStore integration** with:
+- Client-side document persistence using Expo SQLite
+- Offline operation queuing and automatic sync
+- Pre-initialized database support for complex architectures  
+- Dual-database integration (builtin + userdata schemas)
 - Connection pooling with dependency injection
 - Cross-database queries for analytics
 - Zero bundling conflicts with browser/Node.js apps
+
+The React Native storage package enables the full DurableStore offline-first experience on mobile platforms.
 
 ## Documentation
 
