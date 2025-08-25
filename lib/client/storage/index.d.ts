@@ -28,6 +28,7 @@ declare namespace ShareDBStorage {
     initialize(callback: Callback): void;
     readRecord(storeName: string, id: string, callback: Callback<any>): void;
     readAllRecords(storeName: string, callback: Callback<StorageRecord[]>): void;
+    readRecordsBulk?(storeName: string, ids: string[], callback: Callback<StorageRecord[]>): void;
     writeRecords(records: StorageRecords, callback: Callback): void;
     deleteRecord(storeName: string, id: string, callback: Callback): void;
     clearStore(storeName: string, callback: Callback): void;
@@ -55,9 +56,17 @@ declare namespace ShareDBStorage {
     initialize(callback: Callback): void;
     persistDocuments(docs: any[], callback: Callback): void;
     retrieveDocuments(callback: Callback<any[]>): void;
+    retrieveDocumentsBulk(collection: string, ids: string[], callback: Callback<any[]>): void;
     clearDocuments(callback: Callback): void;
     
-    // Events: 'load', 'error'
+    // Batch writing control
+    putDocsBulk(docs: any[], callback?: Callback): void;
+    flush(callback?: Callback): void;
+    getWriteQueueSize(): number;
+    setAutoBatchEnabled(enabled: boolean): void;
+    isAutoBatchEnabled(): boolean;
+    
+    // Events: 'load', 'error', 'before persist', 'persist', 'no persist pending'
   }
 
   interface DurableStoreStatic {
@@ -200,6 +209,7 @@ declare namespace ShareDBStorage {
     writeRecords(db: any, records: StorageRecords, callback: Callback): void;
     readRecord(db: any, type: string, id: string, collection?: string, callback?: Callback): void;
     readAllRecords(db: any, type: string, collection?: string, callback?: Callback): void;
+    readRecordsBulk?(db: any, type: string, collection: string, ids: string[], callback: Callback<StorageRecord[]>): void;
     deleteRecord(db: any, type: string, id: string, collection?: string, callback?: Callback): void;
     clearStore(db: any, storeName: string, callback: Callback): void;
     clearAll(db: any, callback: Callback): void;

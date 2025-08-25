@@ -38,6 +38,9 @@ tracker](https://github.com/share/sharedb/issues).
  - Middleware for implementing access control and custom extensions
  - Ideal for use in browsers or on the server
  - Offline change syncing upon reconnection
+ - **Bulk document operations** for efficient multi-document loading and writing
+ - **Advanced offline persistence** with DurableStore and pluggable storage layers
+ - **Caller-controlled batch writing** with auto-flush control
  - In-memory implementations of database and pub/sub for unit testing
  - Access to historic document versions
  - Realtime user presence syncing
