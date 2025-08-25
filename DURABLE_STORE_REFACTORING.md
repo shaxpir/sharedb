@@ -218,8 +218,8 @@ optimizeQuery(collection, query) // Transform query for optimization
 1. ✅ Define SchemaStrategy interface
 2. ✅ Extract current schema logic into DefaultSchemaStrategy
 3. ✅ Create CollectionPerTableStrategy with table-based inventory
-4. ⏳ Update ExpoSqliteStorage to accept strategy via options
-5. ⏳ Add migration support between strategies
+4. ✅ Update ExpoSqliteStorage to accept strategy via options
+5. ⏳ Add migration support between strategies (future enhancement)
 
 ### Usage Examples
 
@@ -269,7 +269,7 @@ This document will be updated as work progresses. Current status:
 - Phase 2 (Storage Implementations): ✅ Complete (except SQLite async details)
 - Phase 3 (Integration): ✅ Complete
 - Phase 4 (Testing): ⏳ Pending
-- Phase 5 (Schema Strategies): 🔄 In Progress (architecture complete, integration pending)
+- Phase 5 (Schema Strategies): ✅ Complete
 
 ## Commits Made
 1. `e423848` - Add refactoring plan document
@@ -278,3 +278,5 @@ This document will be updated as work progresses. Current status:
 4. `e88cfaf` - Update refactoring plan with progress
 5. `c7cd962` - Fix SQL injection vulnerabilities in ExpoSqliteStorage
 6. `146661b` - Add pluggable schema strategy architecture for ExpoSqliteStorage
+7. `4477a93` - Document schema strategy architecture with inventory options
+8. `edd1c1f` - Refactor ExpoSqliteStorage to use pluggable schema strategies
