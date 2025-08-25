@@ -162,18 +162,6 @@ declare namespace ShareDBStorage {
     new (options?: any): BaseSqliteAdapter;
   }
 
-  interface ExpoSqliteAdapterOptions {
-    database: any; // Expo SQLite database instance
-    debug?: boolean;
-  }
-
-  interface ExpoSqliteAdapter extends SqliteAdapter {
-    readonly database: any;
-  }
-
-  interface ExpoSqliteAdapterStatic {
-    new (options: ExpoSqliteAdapterOptions): ExpoSqliteAdapter;
-  }
 
   interface NodeSqliteAdapterOptions {
     debug?: boolean;
@@ -248,27 +236,6 @@ declare namespace ShareDBStorage {
     new (options: CollectionPerTableStrategyOptions): CollectionPerTableStrategy;
   }
 
-  // ===============================
-  // Legacy Export (ExpoSqliteStorage)
-  // ===============================
-
-  interface ExpoSqliteStorageOptions {
-    sqliteDatabase: any;
-    useEncryption?: boolean;
-    encryptionCallback?: (text: string) => string;
-    decryptionCallback?: (encrypted: string) => string;
-    debug?: boolean;
-  }
-
-  interface ExpoSqliteStorage extends Storage {
-    readonly sqliteDatabase: any;
-    readonly useEncryption: boolean;
-    readonly ready: boolean;
-  }
-
-  interface ExpoSqliteStorageStatic {
-    new (options: ExpoSqliteStorageOptions): ExpoSqliteStorage;
-  }
 }
 
 // ===============================
@@ -279,11 +246,9 @@ export const DurableStore: ShareDBStorage.DurableStoreStatic;
 export const InMemoryStorage: ShareDBStorage.InMemoryStorageStatic;
 export const IndexedDbStorage: ShareDBStorage.IndexedDbStorageStatic;
 export const SqliteStorage: ShareDBStorage.SqliteStorageStatic;
-export const ExpoSqliteStorage: ShareDBStorage.ExpoSqliteStorageStatic;
 
 // Adapters
 export const BaseSqliteAdapter: ShareDBStorage.BaseSqliteAdapterStatic;
-export const ExpoSqliteAdapter: ShareDBStorage.ExpoSqliteAdapterStatic;
 export const NodeSqliteAdapter: ShareDBStorage.NodeSqliteAdapterStatic;
 
 // Schema Strategies
