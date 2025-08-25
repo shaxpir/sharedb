@@ -43,8 +43,10 @@
 - [x] Fix ExpoSqliteStorage bugs:
   - [x] Replace `window.performance.now()` with React Native compatible timing
   - [x] Fix undefined `options` reference (should be `this`)
-  - [x] Fix ES3 compatibility (arrow functions, const/let)
+  - [x] Fix ES3 compatibility (arrow functions, const/let, template literals)
   - [x] Fix variable scoping issues in writeRecords
+  - [x] Fix SQL injection vulnerabilities with parameterized queries
+  - [x] Add validateStoreName() method for table name validation
   - [ ] Complete SQL implementation with proper async/await
   - [ ] Fix SQL syntax and promises
 
@@ -147,6 +149,60 @@ var connection = new ShareDB.Connection(socket, {
 - Timing: Consider using `Date.now()` for cross-platform compatibility
 - **Make incremental git commits throughout progress** - Commit after significant milestones
 
+## Phase 5: Schema Strategy Architecture (New)
+
+### Motivation
+The current ExpoSqliteStorage uses a fixed schema with two tables ('meta' and 'docs'). This limits flexibility for production use cases that need:
+- Performance optimization through collection-specific tables
+- Granular field-level encryption
+- SQL indexes on specific JSON fields
+- Custom query optimization
+
+### Schema Strategy Interface
+Each schema strategy must implement these methods:
+
+```javascript
+// Core schema operations
+initializeSchema(db, callback) // Create tables, indexes
+validateSchema(db, callback) // Check if schema is valid
+migrateSchema(db, fromVersion, toVersion, callback) // Handle migrations
+
+// Storage operations  
+writeRecords(db, records, callback) // Write with strategy-specific logic
+readRecord(db, collection, id, callback) // Read with strategy-specific logic
+deleteRecord(db, collection, id, callback) // Delete with strategy-specific logic
+readAllRecords(db, collection, callback) // Read all records in collection
+
+// Encryption strategy
+shouldEncryptField(collection, fieldPath) // Determine field-level encryption
+encryptRecord(record, collection) // Apply encryption strategy
+decryptRecord(record, collection) // Apply decryption strategy
+
+// Query optimization
+createIndexes(db, collection, callback) // Create collection-specific indexes
+optimizeQuery(collection, query) // Transform query for optimization
+```
+
+### Example Strategies
+
+#### DefaultSchemaStrategy
+- Current behavior: single 'docs' table for all collections
+- Single 'meta' table for inventory
+- All-or-nothing encryption
+
+#### CollectionPerTableStrategy  
+- Separate table for each collection
+- Custom indexes per collection
+- Field-level encryption options
+- Optimized queries per collection
+
+### Implementation Plan
+1. Extract current schema logic into DefaultSchemaStrategy
+2. Define SchemaStrategy interface
+3. Update ExpoSqliteStorage to accept strategy via options
+4. Create example alternative strategies
+5. Add migration support between strategies
+
 ## Progress Tracking
 
 This document will be updated as work progresses. Current status:
@@ -160,3 +216,5 @@ This document will be updated as work progresses. Current status:
 1. `e423848` - Add refactoring plan document
 2. `971e9c2` - Refactor DurableStore to use dependency injection for storage
 3. `4340b86` - Fix bugs in ExpoSqliteStorage implementation
+4. `e88cfaf` - Update refactoring plan with progress
+5. `c7cd962` - Fix SQL injection vulnerabilities in ExpoSqliteStorage
