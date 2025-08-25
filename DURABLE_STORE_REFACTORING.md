@@ -261,15 +261,58 @@ var storage = new ExpoSqliteStorage({
 });
 ```
 
+## Phase 6: Database Adapter Abstraction
+
+### Motivation
+Enable testing of SQLite storage without requiring React Native/Expo environment, and allow the same storage code to work across different SQLite implementations.
+
+### Architecture
+```
+SqliteStorage
+    ↓
+Database Adapter (BaseSqliteAdapter)
+    ├── ExpoSqliteAdapter (React Native)
+    └── NodeSqliteAdapter (Node.js testing)
+            ├── better-sqlite3 (preferred)
+            └── sqlite3 (fallback)
+```
+
+### Benefits
+- **Testing**: Run tests in Node.js without React Native
+- **Flexibility**: Switch between SQLite implementations
+- **Compatibility**: Maintain backward compatibility via ExpoSqliteStorage wrapper
+- **Development**: Easier local development and debugging
+
+### Usage Examples
+
+```javascript
+// React Native
+var ExpoSqliteAdapter = require('sharedb/lib/client/storage/adapters/expo-sqlite-adapter');
+var adapter = new ExpoSqliteAdapter();
+var storage = new SqliteStorage({
+  adapter: adapter,
+  schemaStrategy: myStrategy
+});
+
+// Node.js Testing
+var NodeSqliteAdapter = require('sharedb/lib/client/storage/adapters/node-sqlite-adapter');
+var adapter = new NodeSqliteAdapter();
+var storage = new SqliteStorage({
+  adapter: adapter,
+  schemaStrategy: myStrategy
+});
+```
+
 ## Progress Tracking
 
 This document will be updated as work progresses. Current status:
 - Planning: ✅ Complete
 - Phase 1 (Core Refactoring): ✅ Complete
-- Phase 2 (Storage Implementations): ✅ Complete (except SQLite async details)
+- Phase 2 (Storage Implementations): ✅ Complete
 - Phase 3 (Integration): ✅ Complete
-- Phase 4 (Testing): ⏳ Pending
+- Phase 4 (Testing): ⏳ Pending (test suite created)
 - Phase 5 (Schema Strategies): ✅ Complete
+- Phase 6 (Database Adapters): ✅ Complete
 
 ## Commits Made
 1. `e423848` - Add refactoring plan document
@@ -280,3 +323,5 @@ This document will be updated as work progresses. Current status:
 6. `146661b` - Add pluggable schema strategy architecture for ExpoSqliteStorage
 7. `4477a93` - Document schema strategy architecture with inventory options
 8. `edd1c1f` - Refactor ExpoSqliteStorage to use pluggable schema strategies
+9. `dea51b7` - Mark Phase 5 (Schema Strategies) as complete
+10. `14bd23d` - Add database adapter abstraction for SQLite storage
