@@ -30,26 +30,28 @@
 ## Implementation Checklist
 
 ### Phase 1: Core Refactoring
-- [ ] Fix variable declaration bug in DurableStore constructor (line 43)
-- [ ] Refactor DurableStore constructor to accept `(storage, options)` instead of just `(options)`
-- [ ] Remove all require() statements for storage implementations from durable-store.js
-- [ ] Update DurableStore to use injected storage instance
+- [x] Fix variable declaration bug in DurableStore constructor (line 43)
+- [x] Refactor DurableStore constructor to accept `(storage, options)` instead of just `(options)`
+- [x] Remove all require() statements for storage implementations from durable-store.js
+- [x] Update DurableStore to use injected storage instance
 
 ### Phase 2: Storage Implementations
-- [ ] Create InMemoryStorage implementation in `lib/client/storage/in-memory-storage.js`
-  - [ ] Implement same interface as IndexedDbStorage
-  - [ ] Store data in memory using simple JS objects
-  - [ ] Support all required methods: initialize, ensureReady, readRecord, writeRecords, etc.
-- [ ] Fix ExpoSqliteStorage bugs:
-  - [ ] Replace `window.performance.now()` with React Native compatible timing
-  - [ ] Fix undefined `options` reference (should be `this`)
+- [x] Create InMemoryStorage implementation in `lib/client/storage/in-memory-storage.js`
+  - [x] Implement same interface as IndexedDbStorage
+  - [x] Store data in memory using simple JS objects
+  - [x] Support all required methods: initialize, ensureReady, readRecord, writeRecords, etc.
+- [x] Fix ExpoSqliteStorage bugs:
+  - [x] Replace `window.performance.now()` with React Native compatible timing
+  - [x] Fix undefined `options` reference (should be `this`)
+  - [x] Fix ES3 compatibility (arrow functions, const/let)
+  - [x] Fix variable scoping issues in writeRecords
   - [ ] Complete SQL implementation with proper async/await
   - [ ] Fix SQL syntax and promises
 
 ### Phase 3: Integration
-- [ ] Update Connection to accept storage instance in options
-  - [ ] Connection options should have `durableStore.storage` field
-  - [ ] Pass storage instance when creating DurableStore
+- [x] Update Connection to accept storage instance in options
+  - [x] Connection options should have `durableStore.storage` field
+  - [x] Pass storage instance when creating DurableStore
 - [ ] Update any existing Connection usage examples/tests
 
 ### Phase 4: Testing
@@ -149,6 +151,12 @@ var connection = new ShareDB.Connection(socket, {
 
 This document will be updated as work progresses. Current status:
 - Planning: ✅ Complete
-- Implementation: 🔄 In Progress
-- Testing: ⏳ Pending
-- Integration: ⏳ Pending
+- Phase 1 (Core Refactoring): ✅ Complete
+- Phase 2 (Storage Implementations): ✅ Complete (except SQLite async details)
+- Phase 3 (Integration): ✅ Complete
+- Phase 4 (Testing): ⏳ Pending
+
+## Commits Made
+1. `e423848` - Add refactoring plan document
+2. `971e9c2` - Refactor DurableStore to use dependency injection for storage
+3. `4340b86` - Fix bugs in ExpoSqliteStorage implementation
