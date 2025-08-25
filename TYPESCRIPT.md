@@ -76,15 +76,18 @@ const durableStore: Types.DurableStore = new DurableStore(storage, {
 connection.useDurableStore(durableStore);
 ```
 
-### SQLite Storage with Schema Strategies
+### External Storage Adapters
+
+For SQLite storage in React Native applications:
 
 ```typescript
+// Use the dedicated React Native storage package
 import { 
   SqliteStorage,
   ExpoSqliteAdapter,
   CollectionPerTableStrategy,
   Types
-} from '@shaxpir/sharedb/lib/client/storage';
+} from '@shaxpir/sharedb-storage-expo-sqlite';
 
 // Define collection configuration
 const collectionConfig: { [collection: string]: Types.CollectionConfig } = {
@@ -390,7 +393,7 @@ See the complete TypeScript usage example in `/examples/typescript-usage.ts` for
 
 - Server setup with middleware
 - Client setup with DurableStore 
-- SQLite storage with encryption
+- Storage adapters with encryption
 - Type-safe document operations
 - Query handling
 - Error management

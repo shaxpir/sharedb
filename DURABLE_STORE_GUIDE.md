@@ -1,9 +1,6 @@
-# DurableStore Implementation Guide for React Native with Expo SQLite
+# DurableStore Implementation Guide for React Native
 
-> **⚠️ React Native Notice**: This guide references the legacy React Native storage implementation. 
-> **For new React Native projects, use [@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite)** which provides the same functionality with better architecture and zero bundling conflicts.
-
-This guide walks you through implementing ShareDB's DurableStore system in a React Native application using Expo SQLite. We'll build a complete social media app data layer with user profiles, friend lists, and news feeds, demonstrating how to leverage the pluggable storage architecture with schema strategies, encryption, and automatic SQLite indexing.
+This guide walks you through implementing ShareDB's DurableStore system in a React Native application using SQLite storage. We'll build a complete social media app data layer with user profiles, friend lists, and news feeds, demonstrating how to leverage the pluggable storage architecture with schema strategies, encryption, and automatic SQLite indexing.
 
 ## Overview of the Architecture
 

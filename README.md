@@ -54,10 +54,10 @@ tracker](https://github.com/shaxpir/sharedb/issues).
 
 For React Native applications using the **DurableStore** system, use the dedicated storage adapter:
 
-- **[@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite)** - Expo SQLite storage adapter for DurableStore's pluggable storage architecture
+- **[@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite)** - SQLite storage adapter for React Native/Expo applications
 
 This storage adapter provides **DurableStore integration** with:
-- Client-side document persistence using Expo SQLite
+- Client-side document persistence using SQLite in React Native
 - Offline operation queuing and automatic sync
 - Pre-initialized database support for complex architectures  
 - Dual-database integration (builtin + userdata schemas)
@@ -67,7 +67,7 @@ This storage adapter provides **DurableStore integration** with:
 
 **DurableStore Storage Architecture**:
 - **Browser**: Built-in IndexedDB storage adapter (default)
-- **React Native**: Expo SQLite storage adapter (via separate package)
+- **React Native**: SQLite storage adapter (via separate package)
 - **Custom**: Third-party storage adapters can be implemented for any persistence backend
 
 ## Documentation

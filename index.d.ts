@@ -392,98 +392,6 @@ declare namespace ShareDB {
     deleteDatabase(): void;
   }
 
-  // ===============================
-  // SQLite Storage Types
-  // ===============================
-
-  interface SqliteStorageOptions {
-    adapter: SqliteAdapter;
-    schemaStrategy?: SchemaStrategy;
-    debug?: boolean;
-  }
-
-  interface SqliteStorage extends Storage {
-    readonly adapter: SqliteAdapter;
-    readonly schemaStrategy: SchemaStrategy;
-    readonly ready: boolean;
-
-    updateInventory(collection: string, docId: string, version: number, operation: string, callback: Callback): void;
-    readInventory(callback: Callback): void;
-    deleteDatabase(callback: Callback): void;
-  }
-
-  interface SqliteAdapter {
-    readonly isReady: boolean;
-
-    openDatabase(callback: Callback): void;
-    closeDatabase(callback: Callback): void;
-    run(sql: string, params: any[], callback: Callback): void;
-    get(sql: string, params: any[], callback: Callback): void;
-    all(sql: string, params: any[], callback: Callback): void;
-    getType(): string;
-  }
-
-  interface ExpoSqliteAdapterOptions {
-    database: any; // Expo SQLite database instance
-    debug?: boolean;
-  }
-
-  interface ExpoSqliteAdapter extends SqliteAdapter {
-    readonly database: any;
-  }
-
-  interface NodeSqliteAdapterOptions {
-    debug?: boolean;
-  }
-
-  interface NodeSqliteAdapter extends SqliteAdapter {}
-
-  // ===============================
-  // Schema Strategy Types
-  // ===============================
-
-  interface CollectionConfig {
-    indexes: string[];
-    encryptedFields: string[];
-  }
-
-  interface SchemaStrategyOptions {
-    useEncryption?: boolean;
-    encryptionCallback?: (text: string) => string;
-    decryptionCallback?: (encrypted: string) => string;
-    debug?: boolean;
-  }
-
-  interface SchemaStrategy {
-    initializeSchema(db: any, callback: Callback): void;
-    validateSchema(db: any, callback: Callback): void;
-    writeRecords(db: any, records: StorageRecords, callback: Callback): void;
-    readRecord(db: any, type: string, id: string, collection?: string, callback?: Callback): void;
-    readAllRecords(db: any, type: string, collection?: string, callback?: Callback): void;
-    readRecordsBulk?(db: any, type: string, collection: string, ids: string[], callback: Callback<StorageRecord[]>): void;
-    deleteRecord(db: any, type: string, id: string, collection?: string, callback?: Callback): void;
-    clearStore(db: any, storeName: string, callback: Callback): void;
-    clearAll(db: any, callback: Callback): void;
-    updateInventoryItem(db: any, collection: string, docId: string, version: number, operation: string, callback: Callback): void;
-    readInventory(db: any, callback: Callback): void;
-    initializeInventory(db: any, callback: Callback): void;
-    getInventoryType(): string;
-  }
-
-  interface DefaultSchemaStrategyOptions extends SchemaStrategyOptions {}
-
-  interface DefaultSchemaStrategy extends SchemaStrategy {}
-
-  interface CollectionPerTableStrategyOptions extends SchemaStrategyOptions {
-    collectionConfig: { [collection: string]: CollectionConfig };
-  }
-
-  interface CollectionPerTableStrategy extends SchemaStrategy {
-    readonly collectionConfig: { [collection: string]: CollectionConfig };
-    
-    getTableName(collection: string): string;
-    ensureCollectionTable(db: any, collection: string, callback: Callback): void;
-  }
 
   // ===============================
   // Static Constructors
@@ -518,25 +426,6 @@ declare namespace ShareDB {
     new (options?: IndexedDbStorageOptions): IndexedDbStorage;
   }
 
-  interface SqliteStorageStatic {
-    new (options: SqliteStorageOptions): SqliteStorage;
-  }
-
-  interface ExpoSqliteAdapterStatic {
-    new (options: ExpoSqliteAdapterOptions): ExpoSqliteAdapter;
-  }
-
-  interface NodeSqliteAdapterStatic {
-    new (options?: NodeSqliteAdapterOptions): NodeSqliteAdapter;
-  }
-
-  interface DefaultSchemaStrategyStatic {
-    new (options?: DefaultSchemaStrategyOptions): DefaultSchemaStrategy;
-  }
-
-  interface CollectionPerTableStrategyStatic {
-    new (options: CollectionPerTableStrategyOptions): CollectionPerTableStrategy;
-  }
 
   // ===============================
   // SharedWorker Proxy System

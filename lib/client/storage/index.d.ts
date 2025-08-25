@@ -117,124 +117,6 @@ declare namespace ShareDBStorage {
     new (options: IndexedDbStorageOptions): IndexedDbStorage;
   }
 
-  // ===============================
-  // SQLite Storage System
-  // ===============================
-
-  interface SqliteStorageOptions {
-    adapter: SqliteAdapter;
-    schemaStrategy?: SchemaStrategy;
-    debug?: boolean;
-  }
-
-  interface SqliteStorage extends Storage {
-    readonly adapter: SqliteAdapter;
-    readonly schemaStrategy: SchemaStrategy;
-    readonly ready: boolean;
-
-    updateInventory(collection: string, docId: string, version: number, operation: string, callback: Callback): void;
-    readInventory(callback: Callback): void;
-    deleteDatabase(callback: Callback): void;
-  }
-
-  interface SqliteStorageStatic {
-    new (options: SqliteStorageOptions): SqliteStorage;
-  }
-
-  // ===============================
-  // SQLite Adapters
-  // ===============================
-
-  interface SqliteAdapter {
-    readonly isReady: boolean;
-
-    openDatabase(callback: Callback): void;
-    closeDatabase(callback: Callback): void;
-    run(sql: string, params: any[], callback: Callback): void;
-    get(sql: string, params: any[], callback: Callback): void;
-    all(sql: string, params: any[], callback: Callback): void;
-    getType(): string;
-  }
-
-  interface BaseSqliteAdapter extends SqliteAdapter {}
-
-  interface BaseSqliteAdapterStatic {
-    new (options?: any): BaseSqliteAdapter;
-  }
-
-
-  interface NodeSqliteAdapterOptions {
-    debug?: boolean;
-  }
-
-  interface NodeSqliteAdapter extends SqliteAdapter {
-    readonly db: any; // better-sqlite3 or sqlite3 database instance
-  }
-
-  interface NodeSqliteAdapterStatic {
-    new (options?: NodeSqliteAdapterOptions): NodeSqliteAdapter;
-  }
-
-  // ===============================
-  // Schema Strategies
-  // ===============================
-
-  interface CollectionConfig {
-    indexes: string[];
-    encryptedFields: string[];
-  }
-
-  interface SchemaStrategyOptions {
-    useEncryption?: boolean;
-    encryptionCallback?: (text: string) => string;
-    decryptionCallback?: (encrypted: string) => string;
-    debug?: boolean;
-  }
-
-  interface SchemaStrategy {
-    initializeSchema(db: any, callback: Callback): void;
-    validateSchema(db: any, callback: Callback): void;
-    writeRecords(db: any, records: StorageRecords, callback: Callback): void;
-    readRecord(db: any, type: string, id: string, collection?: string, callback?: Callback): void;
-    readAllRecords(db: any, type: string, collection?: string, callback?: Callback): void;
-    readRecordsBulk?(db: any, type: string, collection: string, ids: string[], callback: Callback<StorageRecord[]>): void;
-    deleteRecord(db: any, type: string, id: string, collection?: string, callback?: Callback): void;
-    clearStore(db: any, storeName: string, callback: Callback): void;
-    clearAll(db: any, callback: Callback): void;
-    updateInventoryItem(db: any, collection: string, docId: string, version: number, operation: string, callback: Callback): void;
-    readInventory(db: any, callback: Callback): void;
-    initializeInventory(db: any, callback: Callback): void;
-    getInventoryType(): string;
-  }
-
-  interface BaseSchemaStrategy extends SchemaStrategy {}
-
-  interface BaseSchemaStrategyStatic {
-    new (options?: SchemaStrategyOptions): BaseSchemaStrategy;
-  }
-
-  interface DefaultSchemaStrategyOptions extends SchemaStrategyOptions {}
-
-  interface DefaultSchemaStrategy extends SchemaStrategy {}
-
-  interface DefaultSchemaStrategyStatic {
-    new (options?: DefaultSchemaStrategyOptions): DefaultSchemaStrategy;
-  }
-
-  interface CollectionPerTableStrategyOptions extends SchemaStrategyOptions {
-    collectionConfig: { [collection: string]: CollectionConfig };
-  }
-
-  interface CollectionPerTableStrategy extends SchemaStrategy {
-    readonly collectionConfig: { [collection: string]: CollectionConfig };
-    
-    getTableName(collection: string): string;
-    ensureCollectionTable(db: any, collection: string, callback: Callback): void;
-  }
-
-  interface CollectionPerTableStrategyStatic {
-    new (options: CollectionPerTableStrategyOptions): CollectionPerTableStrategy;
-  }
 
 }
 
@@ -245,16 +127,6 @@ declare namespace ShareDBStorage {
 export const DurableStore: ShareDBStorage.DurableStoreStatic;
 export const InMemoryStorage: ShareDBStorage.InMemoryStorageStatic;
 export const IndexedDbStorage: ShareDBStorage.IndexedDbStorageStatic;
-export const SqliteStorage: ShareDBStorage.SqliteStorageStatic;
-
-// Adapters
-export const BaseSqliteAdapter: ShareDBStorage.BaseSqliteAdapterStatic;
-export const NodeSqliteAdapter: ShareDBStorage.NodeSqliteAdapterStatic;
-
-// Schema Strategies
-export const BaseSchemaStrategy: ShareDBStorage.BaseSchemaStrategyStatic;
-export const DefaultSchemaStrategy: ShareDBStorage.DefaultSchemaStrategyStatic;
-export const CollectionPerTableStrategy: ShareDBStorage.CollectionPerTableStrategyStatic;
 
 // Type exports
 export namespace Types {
@@ -262,8 +134,5 @@ export namespace Types {
   export type StorageRecord = ShareDBStorage.StorageRecord;
   export type StorageRecords = ShareDBStorage.StorageRecords;
   export type DurableStore = ShareDBStorage.DurableStore;
-  export type SqliteAdapter = ShareDBStorage.SqliteAdapter;
-  export type SchemaStrategy = ShareDBStorage.SchemaStrategy;
-  export type CollectionConfig = ShareDBStorage.CollectionConfig;
   export type Callback<T = any> = ShareDBStorage.Callback<T>;
 }

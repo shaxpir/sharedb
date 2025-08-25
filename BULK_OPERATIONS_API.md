@@ -339,7 +339,7 @@ connection.getBulk('collection', ids, (err, docs) => {
 
 ### Storage-Specific Optimizations
 
-**SQLite Storage (CollectionPerTableStrategy):**
+**External SQLite Storage (@shaxpir/sharedb-storage-expo-sqlite):**
 - Generates `SELECT ... WHERE id IN (?, ?, ?)` queries
 - Leverages indexed columns for optimal performance
 - Minimizes database connection overhead

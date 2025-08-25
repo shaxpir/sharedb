@@ -163,6 +163,9 @@ describe('Connection Bulk Operations', function() {
 
   describe('putDoc', function() {
     it('should add document to write queue', function(done) {
+      // Ensure DurableStore is ready before testing
+      expect(durableStore.ready).to.be.true;
+      
       var doc = connection.get('testCollection', 'putDoc1');
       doc.create({ title: 'Test Doc' });
       

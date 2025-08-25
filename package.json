@@ -14,7 +14,6 @@
   "devDependencies": {
     "@shaxpir/ot-json1-presence": "3.0.1",
     "@shaxpir/rich-text": "^5.0.2",
-    "better-sqlite3": "^12.2.0",
     "chai": "^4.3.7",
     "coveralls": "^3.1.1",
     "eslint": "^8.47.0",
