@@ -56,11 +56,19 @@ ShareDB uses adapters for pluggability:
 ### Shaxpir Fork Features
 
 **DurableStore** (`lib/client/durable-store.js`):
-- Uses IndexedDB for offline document persistence
+- Uses IndexedDB for offline document persistence in browser environments
 - Queues operations when offline
 - Supports encryption callbacks
 - Automatically syncs on reconnection
-- Enabled via `connection.useDurableStore({encryptionKey: ...})`
+- Enabled via `connection.useDurableStore({storage: storageAdapter})`
+
+**React Native Support**:
+For React Native applications, use the separate **[@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite)** package which provides:
+- Expo SQLite storage adapter for DurableStore
+- Dual-database architecture support
+- Connection pooling capabilities
+- Cross-database query support
+- Zero bundling conflicts with browser/Node.js environments
 
 ### Key Development Notes
 
