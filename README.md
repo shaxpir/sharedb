@@ -45,6 +45,19 @@ tracker](https://github.com/share/sharedb/issues).
  - Access to historic document versions
  - Realtime user presence syncing
 
+## React Native Support
+
+For React Native applications, use the dedicated package:
+
+- **[@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite)** - Expo SQLite storage with dual-database and connection pooling support
+
+This provides:
+- Pre-initialized database support for complex database architectures
+- Dual-database integration (builtin + userdata)
+- Connection pooling with dependency injection
+- Cross-database queries for analytics
+- Zero bundling conflicts with browser/Node.js apps
+
 ## Documentation
 
 https://share.github.io/sharedb/
