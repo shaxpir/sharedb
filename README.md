@@ -12,6 +12,7 @@ This is the **Shaxpir fork** of ShareDB, which introduces a new **DurableStore**
 - **Multi-document working sets** - Persist multiple documents with pending operations across browsing sessions  
 - **Transparent operation sync** - Offline operations automatically sync to ShareDB when connectivity returns
 - **Client-side persistence** - Documents remain available even after closing and reopening the application
+- **Multi-tab safety** - ProxyConnection with MessageBroker enables safe DurableStore usage across multiple browser tabs
 - **Enhanced TypeScript support** - Comprehensive type definitions for DurableStore, storage adapters, and client APIs
 
 The DurableStore system is a **unique enhancement** not available in the original upstream ShareDB, specifically designed for offline-first collaborative applications.

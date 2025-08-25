@@ -63,6 +63,12 @@ ShareDB uses adapters for pluggability:
 - Automatically syncs on reconnection
 - Enabled via `connection.useDurableStore({storage: storageAdapter})`
 
+**ProxyConnection & Multi-tab Safety** (`lib/client/proxy-connection.js`):
+- MessageBroker system for coordinating multiple browser tabs
+- Prevents DurableStore conflicts in multi-tab environments
+- Enables safe shared storage across tabs with coordinated sync
+- SharedWorker-based inter-tab communication
+
 **Available Storage Adapters**:
 - **Built-in IndexedDB Storage** (`lib/client/storage/indexed-db-storage.js`) - Default browser storage
 - **[@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite)** - React Native SQLite storage with:
