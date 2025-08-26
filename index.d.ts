@@ -229,6 +229,10 @@ declare namespace ShareDB {
     
     useDurableStore(durableStore: DurableStore): void;
     
+    // DurableStore inventory methods
+    isDocInInventory(collection: string, id: string, minVersion?: string | number): boolean;
+    forEachPendingDocCollectionId(callback: (collection: string, id: string) => void): void;
+    
     // Batch writing control
     setAutoFlush(enabled: boolean): void;
     isAutoFlush(): boolean;
@@ -685,6 +689,9 @@ declare namespace ShareDB {
   export const Connection: ConnectionStatic;
   export const Doc: DocStatic; 
   export const Query: QueryStatic;
+  
+  // DurableStore System
+  export const DurableStore: DurableStoreStatic;
   
   // SharedWorker Proxy System
   export const proxy: ProxySystem;

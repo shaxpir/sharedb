@@ -4,10 +4,5 @@
 
 import ShareDB from '../../index';
 
-// Re-export the main ShareDB class as default
+// Re-export everything from main module
 export = ShareDB;
-
-// Named exports for client-specific classes
-export const Connection: ShareDB.ConnectionStatic;
-export const Doc: ShareDB.DocStatic;
-export const Query: ShareDB.QueryStatic;
