@@ -284,6 +284,11 @@ declare namespace ShareDB {
     unsubscribe(callback?: Callback): this;
 
     whenNothingPending(callback: Callback): void;
+    
+    // DurableStore-related methods
+    destroy(callback?: Callback): void;
+    ensureDocHasData(callback?: Callback): void;
+    ensureDocHasRecentData(minVersion: string | number, callback?: Callback): void;
 
     // Events: 'load', 'create', 'before op', 'op', 'del', 'error', 'nothing pending'
   }
@@ -661,10 +666,7 @@ declare namespace ShareDB {
 // Main ShareDB Module Declaration
 // ===============================
 
-// Alias to avoid circular reference
-type ShareDBBackend = ShareDB.Backend;
-
-declare class ShareDB extends ShareDBBackend {
+declare class ShareDB {
   constructor(options?: ShareDB.BackendOptions);
 
   static Agent: any;
