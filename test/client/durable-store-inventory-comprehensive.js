@@ -80,6 +80,147 @@ describe('DurableStore Inventory Management (Comprehensive)', function() {
     });
   });
 
+  describe('Version Management', function() {
+    it('should enforce version progression', function(done) {
+      var doc = {
+        collection: 'items',
+        id: 'item1',
+        data: { value: 1 },
+        version: 3,
+        type: { name: 'json0' },
+        pendingOps: [],
+        inflightOp: null
+      };
+      
+      durableStore.putDoc(doc, function(err) {
+        expect(err).to.not.exist;
+        expect(durableStore.inventory.payload.collections.items.item1.v).to.equal(3);
+        
+        // Try to store with lower version - should throw error
+        doc.version = 2;
+        durableStore.putDoc(doc, function(err) {
+          if (!err) {
+            console.log('ERROR: Expected error but got none for version regression');
+            console.log('Inventory state:', JSON.stringify(durableStore.inventory.payload.collections.items));
+          }
+          expect(err).to.exist;
+          expect(err.message).to.include('Version regression detected');
+          expect(err.message).to.include('items/item1');
+          expect(err.message).to.include('version 2');
+          expect(err.message).to.include('version 3');
+          
+          // Version should not have changed
+          expect(durableStore.inventory.payload.collections.items.item1.v).to.equal(3);
+          
+          // Same version should be allowed
+          doc.version = 3;
+          durableStore.putDoc(doc, function(err) {
+            expect(err).to.not.exist;
+            
+            // Higher version should be allowed
+            doc.version = 4;
+            durableStore.putDoc(doc, function(err) {
+              expect(err).to.not.exist;
+              expect(durableStore.inventory.payload.collections.items.item1.v).to.equal(4);
+              done();
+            });
+          });
+        });
+      });
+    });
+
+    it('should enforce version type consistency', function(done) {
+      // Start with numeric version
+      var doc = {
+        collection: 'typed',
+        id: 'doc1',
+        data: { value: 1 },
+        version: 5,
+        type: { name: 'json0' },
+        pendingOps: [],
+        inflightOp: null
+      };
+      
+      durableStore.putDoc(doc, function(err) {
+        expect(err).to.not.exist;
+        expect(durableStore.inventory.payload.collections.typed.doc1.v).to.equal(5);
+        
+        // Create mock with string version extractor
+        var stringVersionStore = new DurableStore(storage, { 
+          debug: false,
+          extVersionDecoder: function(data) {
+            return data.timestamp || "20250827000000000000";
+          }
+        });
+        stringVersionStore.inventory = durableStore.inventory;
+        stringVersionStore.ready = true;
+        
+        // Try to store with string version - should throw error
+        var stringDoc = {
+          collection: 'typed',
+          id: 'doc1',
+          data: { value: 2, timestamp: "20250827123456789000" },
+          version: 6,
+          type: { name: 'json0' },
+          pendingOps: [],
+          inflightOp: null
+        };
+        
+        stringVersionStore.putDoc(stringDoc, function(err) {
+          expect(err).to.exist;
+          expect(err.message).to.include('Version type mismatch');
+          expect(err.message).to.include('typed/doc1');
+          expect(err.message).to.include('string version 20250827123456789000');
+          expect(err.message).to.include('number 5');
+          
+          done();
+        });
+      });
+    });
+
+    it('should support timestamp-based string versions', function(done) {
+      // Create store with timestamp version extractor
+      var timestampStore = new DurableStore(storage, { 
+        debug: false,
+        extVersionDecoder: function(data) {
+          return data.timestamp;
+        }
+      });
+      timestampStore.inventory = { id: 'inventory', payload: { collections: {} } };
+      timestampStore.ready = true;
+      
+      var doc1 = {
+        collection: 'events',
+        id: 'event1',
+        data: { event: 'created', timestamp: "20250826000000000000" },
+        version: 1,
+        type: { name: 'json0' },
+        pendingOps: [],
+        inflightOp: null
+      };
+      
+      timestampStore.putDoc(doc1, function(err) {
+        expect(err).to.not.exist;
+        expect(timestampStore.inventory.payload.collections.events.event1.v).to.equal("20250826000000000000");
+        
+        // Try earlier timestamp - should fail
+        doc1.data.timestamp = "20250825000000000000";
+        timestampStore.putDoc(doc1, function(err) {
+          expect(err).to.exist;
+          expect(err.message).to.include('Version regression detected');
+          
+          // Later timestamp should work
+          doc1.data.timestamp = "20250827000000000000";
+          timestampStore.putDoc(doc1, function(err) {
+            expect(err).to.not.exist;
+            expect(timestampStore.inventory.payload.collections.events.event1.v).to.equal("20250827000000000000");
+            done();
+          });
+        });
+      });
+    });
+  });
+
   describe('Document Tracking', function() {
     it('should track multiple collections simultaneously', function(done) {
       var docs = [
@@ -427,7 +568,7 @@ describe('DurableStore Inventory Management (Comprehensive)', function() {
       expect(durableStore.inventory.payload.collections).to.be.an('object');
     });
 
-    it('should update inventory even with version conflicts', function(done) {
+    it('should handle errors gracefully', function(done) {
       var validDoc = {
         collection: 'test',
         id: 'valid1',
@@ -442,26 +583,27 @@ describe('DurableStore Inventory Management (Comprehensive)', function() {
         expect(err).to.not.exist;
         expect(durableStore.inventory.payload.collections.test.valid1.v).to.equal(1);
         
-        // Store same document with different version
-        // DurableStore will update inventory to reflect new version
-        var updatedDoc = {
+        // Try to store with invalid version - should get error
+        var invalidDoc = {
           collection: 'test',
           id: 'valid1', // Same ID
           data: { valid: false },
-          version: 2, // Higher version
+          version: 0, // Lower version - should fail
           type: { name: 'json0' },
           pendingOps: [],
           inflightOp: null
         };
         
-        durableStore.putDoc(updatedDoc, function(err) {
-          expect(err).to.not.exist;
+        durableStore.putDoc(invalidDoc, function(err) {
+          // Should get version regression error
+          expect(err).to.exist;
+          expect(err.message).to.include('Version regression detected');
           
-          // Inventory should reflect the new version
+          // Inventory should not have changed
           var testCollection = durableStore.inventory.payload.collections.test;
           expect(testCollection).to.exist;
           expect(testCollection.valid1).to.exist;
-          expect(testCollection.valid1.v).to.equal(2);
+          expect(testCollection.valid1.v).to.equal(1); // Still version 1
           
           done();
         });
