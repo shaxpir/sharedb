@@ -325,51 +325,32 @@ declare namespace ShareDB {
     debug?: boolean;
   }
 
-  interface DurableStore extends EventEmitter {
-    readonly storage: Storage;
-    readonly maxBatchSize: number;
-    readonly debug: boolean;
-
-    initialize(callback: Callback): void;
-    persistDocuments(docs: Doc[], callback: Callback): void;
-    retrieveDocuments(callback: Callback<any[]>): void;
-    retrieveDocumentsBulk(collection: string, ids: string[], callback: Callback<any[]>): void;
-    clearDocuments(callback: Callback): void;
-    
-    // Batch writing control
-    putDocsBulk(docs: Doc[], callback?: Callback): void;
-    flush(callback?: Callback): void;
-    getWriteQueueSize(): number;
-    setAutoBatchEnabled(enabled: boolean): void;
-    isAutoBatchEnabled(): boolean;
-    
-    // Events: 'load', 'error', 'before persist', 'persist', 'no persist pending'
-  }
-
   // ===============================
   // Storage Types
   // ===============================
 
-  interface StorageRecord {
+  type DurableStorageCallback<T = any> = (error: ShareDBError | null, result?: T) => void;
+
+  interface DurableStorageRecord {
     id: string;
     payload: any;
   }
 
-  interface StorageRecords {
-    docs?: StorageRecord | StorageRecord[];
-    meta?: StorageRecord | StorageRecord[];
+  interface DurableStorageRecords {
+    docs?: DurableStorageRecord | DurableStorageRecord[];
+    meta?: DurableStorageRecord | DurableStorageRecord[];
   }
 
-  interface Storage {
-    initialize(callback: Callback): void;
-    readRecord(storeName: string, id: string, callback: Callback<any>): void;
-    readAllRecords(storeName: string, callback: Callback<StorageRecord[]>): void;
-    readRecordsBulk?(storeName: string, ids: string[], callback: Callback<StorageRecord[]>): void;
-    writeRecords(records: StorageRecords, callback: Callback): void;
-    deleteRecord(storeName: string, id: string, callback: Callback): void;
-    clearStore(storeName: string, callback: Callback): void;
-    clearAll(callback: Callback): void;
-    close?(callback: Callback): void;
+  interface DurableStorage {
+    initialize(callback: DurableStorageCallback): void;
+    readRecord(storeName: string, id: string, callback: DurableStorageCallback<any>): void;
+    readAllRecords(storeName: string, callback: DurableStorageCallback<DurableStorageRecord[]>): void;
+    readRecordsBulk?(storeName: string, ids: string[], callback: DurableStorageCallback<DurableStorageRecord[]>): void;
+    writeRecords(records: DurableStorageRecords, callback: DurableStorageCallback): void;
+    deleteRecord(storeName: string, id: string, callback: DurableStorageCallback): void;
+    clearStore(storeName: string, callback: DurableStorageCallback): void;
+    clearAll(callback: DurableStorageCallback): void;
+    close?(callback: DurableStorageCallback): void;
     isReady?(): boolean;
   }
 
@@ -377,7 +358,7 @@ declare namespace ShareDB {
     debug?: boolean;
   }
 
-  interface InMemoryStorage extends Storage {
+  interface InMemoryStorage extends DurableStorage {
     readonly ready: boolean;
     readonly stores: { [storeName: string]: { [id: string]: any } };
   }
@@ -391,7 +372,7 @@ declare namespace ShareDB {
     maxBatchSize?: number;
   }
 
-  interface IndexedDbStorage extends Storage {
+  interface IndexedDbStorage extends DurableStorage {
     readonly namespace: string;
     readonly dbName: string;
     readonly useEncryption: boolean;
@@ -399,6 +380,29 @@ declare namespace ShareDB {
     readonly db: IDBDatabase;
 
     deleteDatabase(): void;
+  }
+
+  class DurableStore extends EventEmitter {
+    readonly storage: DurableStorage;
+    readonly maxBatchSize: number;
+    readonly debug: boolean;
+
+    constructor(storage: DurableStorage, options?: DurableStoreOptions);
+
+    initialize(callback: DurableStorageCallback): void;
+    persistDocuments(docs: Doc[], callback: DurableStorageCallback): void;
+    retrieveDocuments(callback: DurableStorageCallback<any[]>): void;
+    retrieveDocumentsBulk(collection: string, ids: string[], callback: DurableStorageCallback<any[]>): void;
+    clearDocuments(callback: DurableStorageCallback): void;
+    
+    // Batch writing control
+    putDocsBulk(docs: Doc[], callback?: DurableStorageCallback): void;
+    flush(callback?: DurableStorageCallback): void;
+    getWriteQueueSize(): number;
+    setAutoBatchEnabled(enabled: boolean): void;
+    isAutoBatchEnabled(): boolean;
+    
+    // Events: 'load', 'error', 'before persist', 'persist', 'no persist pending'
   }
 
 
@@ -423,9 +427,6 @@ declare namespace ShareDB {
     new (connection: Connection, collection: string, query: any, options?: QueryOptions): Query;
   }
 
-  interface DurableStoreStatic {
-    new (storage: Storage, options?: DurableStoreOptions): DurableStore;
-  }
 
   interface InMemoryStorageStatic {
     new (options?: InMemoryStorageOptions): InMemoryStorage;
@@ -481,7 +482,7 @@ declare namespace ShareDB {
   interface ProxyConnectionOptions {
     channelName?: string;
     debug?: boolean;
-    storage?: Storage;
+    storage?: DurableStorage;
     durableStoreOptions?: DurableStoreOptions;
   }
 
@@ -584,7 +585,7 @@ declare namespace ShareDB {
   interface SharedWorkerManagerOptions {
     debug?: boolean;
     channelName?: string;
-    storage?: Storage;
+    storage?: DurableStorage;
     durableStoreOptions?: DurableStoreOptions;
     sharedWorkerPath?: string;
   }
@@ -616,7 +617,7 @@ declare namespace ShareDB {
 
   interface ConnectionFactory {
     createConnection(backendOrSocket?: any, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
-    createConnectionWithStorage(backendOrSocket: any, storage: Storage, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
+    createConnectionWithStorage(backendOrSocket: any, storage: DurableStorage, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
     isProxyConnection(connection: any): connection is ProxyConnection;
     getProxyCapabilities(): ProxyCapabilities;
     getConnectionStats(): { capabilities: ProxyCapabilities; timestamp: string };
@@ -624,7 +625,7 @@ declare namespace ShareDB {
 
     // Convenience methods
     create(backendOrSocket?: any, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
-    withStorage(backendOrSocket: any, storage: Storage, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
+    withStorage(backendOrSocket: any, storage: DurableStorage, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
   }
 
   interface ProxySystem {
@@ -636,12 +637,12 @@ declare namespace ShareDB {
 
     // Convenience methods
     createConnection(backendOrSocket?: any, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
-    createConnectionWithStorage(backendOrSocket: any, storage: Storage, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
+    createConnectionWithStorage(backendOrSocket: any, storage: DurableStorage, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
     isProxyConnection(connection: any): connection is ProxyConnection;
     getProxyCapabilities(): ProxyCapabilities;
     hasProxySupport(): boolean;
     connect(backendOrSocket?: any, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
-    connectWithStorage(backendOrSocket: any, storage: Storage, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
+    connectWithStorage(backendOrSocket: any, storage: DurableStorage, options?: ConnectionFactoryOptions): Connection | ProxyConnection;
   }
 
   // Static constructors for proxy system
@@ -693,7 +694,6 @@ declare namespace ShareDB {
   export const Query: QueryStatic;
   
   // DurableStore System
-  export const DurableStore: DurableStoreStatic;
   
   // SharedWorker Proxy System
   export const proxy: ProxySystem;
