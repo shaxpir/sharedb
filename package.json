@@ -1,5 +1,5 @@
 {
-  "name": "@shaxpir/sharedb",
+  "name": "@sharesync/sharedb",
   "version": "6.0.13",
   "description": "JSON OT database backend",
   "main": "lib/index.js",
@@ -12,8 +12,8 @@
     "ot-json0": "^1.1.0"
   },
   "devDependencies": {
-    "@shaxpir/ot-json1-presence": "3.0.1",
-    "@shaxpir/rich-text": "^5.0.2",
+    "@sharesync/ot-json1-presence": "3.0.1",
+    "@sharesync/rich-text": "^5.0.2",
     "chai": "^4.3.7",
     "coveralls": "^3.1.1",
     "fake-indexeddb": "^6.1.0",
@@ -41,8 +41,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/shaxpir/sharedb.git"
+    "url": "git://github.com/sharesync-dev/sharedb.git"
   },
   "author": "Nate Smith and Joseph Gentle",
-  "license": "MIT"
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
 }
