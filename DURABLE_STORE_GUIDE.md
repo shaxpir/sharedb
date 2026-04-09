@@ -295,7 +295,7 @@ connection.on('storageError', (err) => {
 
 ## React Native and Mobile
 
-For React Native applications using SQLite storage, see the [@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite) package which provides equivalent functionality with SQLite persistence, advanced schema strategies, and mobile-optimized performance.
+For React Native applications using SQLite storage, see the [@sharesync/sharedb-storage-expo-sqlite](https://github.com/sharesync-dev/sharedb-storage-expo-sqlite) package which provides equivalent functionality with SQLite persistence, advanced schema strategies, and mobile-optimized performance.
 
 ## Conclusion
 

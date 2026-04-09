@@ -14,8 +14,8 @@
 var ShareDB = require('../lib/sharedb');
 var Connection = require('../lib/client/connection');
 var DurableStore = require('../lib/client/durable-store');
-// Note: SQLite storage components are now in @shaxpir/sharedb-storage-expo-sqlite
-// var { SqliteStorage, CollectionPerTableStrategy } = require('@shaxpir/sharedb-storage-expo-sqlite');
+// Note: SQLite storage components are now in @sharesync/sharedb-storage-expo-sqlite
+// var { SqliteStorage, CollectionPerTableStrategy } = require('@sharesync/sharedb-storage-expo-sqlite');
 // For this example, we'll use in-memory storage instead:
 var InMemoryStorage = require('../lib/client/storage/in-memory-storage');
 

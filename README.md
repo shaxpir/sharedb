@@ -1,12 +1,12 @@
 # ShareDB
 
   [![NPM Version](https://img.shields.io/npm/v/sharedb.svg)](https://npmjs.org/package/sharedb)
-  ![Test](https://github.com/shaxpir/sharedb/workflows/Test/badge.svg)
-  [![Coverage Status](https://coveralls.io/repos/github/shaxpir/sharedb/badge.svg?branch=master)](https://coveralls.io/github/shaxpir/sharedb?branch=master)
+  ![Test](https://github.com/sharesync-dev/sharedb/workflows/Test/badge.svg)
+  [![Coverage Status](https://coveralls.io/repos/github/sharesync-dev/sharedb/badge.svg?branch=master)](https://coveralls.io/github/sharesync-dev/sharedb?branch=master)
 
-## Shaxpir: Enhanced ShareDB with DurableStore
+## ShareSync: Enhanced ShareDB with DurableStore
 
-This is the **Shaxpir fork** of ShareDB, which introduces a new **DurableStore** system for offline-first client persistence. The DurableStore allows clients to persist documents and operations using pluggable storage adapters, enabling:
+This is the **ShareSync fork** of ShareDB, which introduces a new **DurableStore** system for offline-first client persistence. The DurableStore allows clients to persist documents and operations using pluggable storage adapters, enabling:
 
 - **Complete offline capability** - Users can work entirely offline, with operations queued for sync upon reconnection
 - **Multi-document working sets** - Persist multiple documents with pending operations across browsing sessions  
@@ -29,7 +29,7 @@ list](https://groups.google.com/forum/?fromgroups#!forum/sharejs) or [read the d
 ).
 
 Please report any bugs you find to the [issue
-tracker](https://github.com/shaxpir/sharedb/issues).
+tracker](https://github.com/sharesync-dev/sharedb/issues).
 
 ## Features
 
@@ -54,7 +54,7 @@ tracker](https://github.com/shaxpir/sharedb/issues).
 
 For React Native applications using the **DurableStore** system, use the dedicated storage adapter:
 
-- **[@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite)** - SQLite storage adapter for React Native/Expo applications
+- **[@sharesync/sharedb-storage-expo-sqlite](https://github.com/sharesync-dev/sharedb-storage-expo-sqlite)** - SQLite storage adapter for React Native/Expo applications
 
 This storage adapter provides **DurableStore integration** with:
 - Client-side document persistence using SQLite in React Native

@@ -15,7 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture Overview
 
-ShareDB is a real-time collaborative editing framework with Operational Transform (OT) support. This is the Shaxpir fork which adds DurableStore for offline persistence.
+ShareDB is a real-time collaborative editing framework with Operational Transform (OT) support. This is the ShareSync fork which adds DurableStore for offline persistence.
 
 ### Core Components
 
@@ -28,7 +28,7 @@ ShareDB is a real-time collaborative editing framework with Operational Transfor
 2. **Client Connection (`lib/client/connection.js`)** - Client-side connection that:
    - Manages WebSocket communication with backend
    - Handles document and query subscriptions
-   - Integrates with DurableStore for offline persistence (Shaxpir fork feature)
+   - Integrates with DurableStore for offline persistence (ShareSync fork feature)
    - Manages presence subscriptions
 
 3. **Document (`lib/client/doc.js`)** - Client document representation that:
@@ -49,7 +49,7 @@ ShareDB uses adapters for pluggability:
 - **PubSub** (`lib/pubsub/`) - Inter-server communication (Memory or Redis)
 - **MilestoneDB** (`lib/milestone-db/`) - Snapshot storage for performance
 
-### Shaxpir Fork Features
+### ShareSync Fork Features
 
 **DurableStore** (`lib/client/durable-store.js`):
 - Pluggable storage architecture supporting multiple persistence layers
@@ -67,7 +67,7 @@ ShareDB uses adapters for pluggability:
 
 **Available Storage Adapters**:
 - **Built-in IndexedDB Storage** (`lib/client/storage/indexed-db-storage.js`) - Default browser storage
-- **[@shaxpir/sharedb-storage-expo-sqlite](https://github.com/shaxpir/sharedb-storage-expo-sqlite)** - React Native SQLite storage with:
+- **[@sharesync/sharedb-storage-expo-sqlite](https://github.com/sharesync-dev/sharedb-storage-expo-sqlite)** - React Native SQLite storage with:
   - Dual-database architecture support
   - Connection pooling capabilities  
   - Cross-database query support

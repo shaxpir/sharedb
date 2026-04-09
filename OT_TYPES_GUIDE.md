@@ -15,7 +15,7 @@ ShareDB supports multiple OT implementations out of the box and allows you to cr
 JSON0 is ShareDB's default OT type, designed for collaborative editing of arbitrary JSON documents. It uses path-based operations to modify nested data structures.
 
 ```typescript
-import ShareDB from '@shaxpir/sharedb';
+import ShareDB from '@sharesync/sharedb';
 
 // Create a document with JSON0 (default type)
 const doc = connection.get('documents', 'doc1');
@@ -207,7 +207,7 @@ doc.submitOp(complexOps);
 Rich Text OT type handles formatted text with attributes like bold, italic, links, and custom styling. It's ideal for building collaborative editors like Google Docs or Notion.
 
 ```typescript
-import RichText from '@shaxpir/rich-text';
+import RichText from '@sharesync/rich-text';
 
 // Register rich-text type
 ShareDB.types.register(RichText.type);

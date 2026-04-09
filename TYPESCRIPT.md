@@ -5,7 +5,7 @@ This package includes comprehensive TypeScript definitions for ShareDB, covering
 ## Installation and Setup
 
 ```bash
-npm install @shaxpir/sharedb
+npm install @sharesync/sharedb
 ```
 
 The TypeScript definitions are automatically included when you import the package. No additional `@types/` package is needed.
@@ -15,7 +15,7 @@ The TypeScript definitions are automatically included when you import the packag
 ### Server-side (Backend)
 
 ```typescript
-import ShareDB from '@shaxpir/sharedb';
+import ShareDB from '@sharesync/sharedb';
 
 // Create backend with typed options
 const backend = new ShareDB({
@@ -34,7 +34,7 @@ backend.use('submit', (context: ShareDB.MiddlewareContext, callback: ShareDB.Cal
 ### Client-side (Connection & Documents)
 
 ```typescript
-import { Connection, Doc, Query } from '@shaxpir/sharedb/lib/client';
+import { Connection, Doc, Query } from '@sharesync/sharedb/lib/client';
 
 // Create connection
 const connection = new Connection(websocket);
@@ -61,7 +61,7 @@ import {
   DurableStore,
   InMemoryStorage,
   Types
-} from '@shaxpir/sharedb/lib/client/storage';
+} from '@sharesync/sharedb/lib/client/storage';
 
 // Create storage
 const storage: Types.Storage = new InMemoryStorage({ debug: true });
@@ -87,7 +87,7 @@ import {
   ExpoSqliteAdapter,
   CollectionPerTableStrategy,
   Types
-} from '@shaxpir/sharedb-storage-expo-sqlite';
+} from '@sharesync/sharedb-storage-expo-sqlite';
 
 // Define collection configuration
 const collectionConfig: { [collection: string]: Types.CollectionConfig } = {
@@ -130,7 +130,7 @@ const storage: Types.Storage = new SqliteStorage({
 ### IndexedDB Storage
 
 ```typescript
-import { IndexedDbStorage } from '@shaxpir/sharedb/lib/client/storage';
+import { IndexedDbStorage } from '@sharesync/sharedb/lib/client/storage';
 
 const storage = new IndexedDbStorage({
   namespace: 'my-app',
@@ -302,7 +302,7 @@ profileDoc.submitOp(updateOps);
 ### Custom Storage Implementation
 
 ```typescript
-import { Types } from '@shaxpir/sharedb/lib/client/storage';
+import { Types } from '@sharesync/sharedb/lib/client/storage';
 
 class MyCustomStorage implements Types.Storage {
   private ready = false;
@@ -328,7 +328,7 @@ class MyCustomStorage implements Types.Storage {
 ### Custom Schema Strategy
 
 ```typescript
-import { Types } from '@shaxpir/sharedb/lib/client/storage';
+import { Types } from '@sharesync/sharedb/lib/client/storage';
 
 class MySchemaStrategy implements Types.SchemaStrategy {
   initializeSchema(db: any, callback: Types.Callback): void {
@@ -403,7 +403,7 @@ See the complete TypeScript usage example in `/examples/typescript-usage.ts` for
 All types are available for import:
 
 ```typescript
-import { Types } from '@shaxpir/sharedb/lib/client/storage';
+import { Types } from '@sharesync/sharedb/lib/client/storage';
 
 // Use any type from the Types namespace
 type MyStorage = Types.Storage;
