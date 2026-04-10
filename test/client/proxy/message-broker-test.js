@@ -66,7 +66,11 @@ describe('MessageBroker', function() {
     }
     
     // Restore original BroadcastChannel
-    global.BroadcastChannel = originalBroadcastChannel;
+    if (originalBroadcastChannel) {
+      global.BroadcastChannel = originalBroadcastChannel;
+    } else {
+      delete global.BroadcastChannel;
+    }
   });
   
   describe('Initialization', function() {

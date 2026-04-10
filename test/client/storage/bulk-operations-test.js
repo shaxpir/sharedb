@@ -45,9 +45,9 @@ describe('Storage Bulk Operations', function() {
   describe('InMemoryStorage', function() {
     beforeEach(function(done) {
       storage = new InMemoryStorage({ debug: false });
-      storage.initialize(function() {
+      storage.initialize(function(err) {
         // Pre-populate with test data
-        storage.writeRecords({ docs: testRecords }, function() {
+        storage.writeRecords({ docs: testRecords }, function(err) {
           done();
         });
       });
@@ -141,16 +141,18 @@ describe('Storage Bulk Operations', function() {
     });
 
     it('should maintain compatibility with existing readRecord method', function(done) {
-      storage.readRecord('docs', 'testCollection/doc1', function(payload) {
+      storage.readRecord('docs', 'testCollection/doc1', function(err, payload) {
+        expect(err).to.not.exist;
         expect(payload).to.not.be.null;
         expect(payload.id).to.equal('doc1');
-        expect(payload.title).to.equal('Document 1');
+        expect(payload.data.title).to.equal('Document 1');
         done();
       });
     });
 
     it('should maintain compatibility with existing readAllRecords method', function(done) {
-      storage.readAllRecords('docs', function(records) {
+      storage.readAllRecords('docs', function(err, records) {
+        expect(err).to.not.exist;
         expect(records).to.be.an('array');
         expect(records).to.have.length(3);
         done();

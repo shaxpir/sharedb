@@ -102,16 +102,11 @@ describe('Architectural Validation', function() {
         checkCompletion();
       });
 
-      // Test getDoc callback convention
-      durableStore.getDoc('test', 'test1', function() {
+      // Test getDoc callback convention (error-first)
+      durableStore.getDoc('test', 'test1', function(error, result) {
         expect(arguments.length).to.equal(2, 'getDoc callback should have 2 arguments (error, result)');
-        if (arguments[0] !== null && arguments[0] !== undefined) {
-          expect(arguments[0]).to.be.an('error', 'First argument should be error or null');
-          expect(arguments[1]).to.be.undefined;
-        } else {
-          // Success case - should have result
-          expect(arguments[1]).to.exist;
-        }
+        expect(error).to.be.null;
+        expect(result).to.exist;
         callbackTestCount++;
         checkCompletion();
       });
@@ -137,17 +132,18 @@ describe('Architectural Validation', function() {
       var callbackTestCount = 0;
       var expectedTests = 2;
 
-      // Test readRecord callback convention
+      // Test readRecord callback convention (error-first)
       storage.readRecord('docs', 'test1', function() {
-        // InMemoryStorage doesn't use error-first pattern, it just returns result
-        expect(arguments.length).to.be.at.least(1, 'readRecord callback should have at least 1 argument');
+        expect(arguments.length).to.equal(2, 'readRecord callback should have 2 arguments (error, result)');
+        expect(arguments[0]).to.be.null; // error should be null on success
         callbackTestCount++;
         checkCompletion();
       });
 
-      // Test readAllRecords callback convention
+      // Test readAllRecords callback convention (error-first)
       storage.readAllRecords('docs', function() {
-        expect(arguments.length).to.be.at.least(1, 'readAllRecords callback should have at least 1 argument');
+        expect(arguments.length).to.equal(2, 'readAllRecords callback should have 2 arguments (error, result)');
+        expect(arguments[0]).to.be.null; // error should be null on success
         callbackTestCount++;
         checkCompletion();
       });
@@ -194,12 +190,8 @@ describe('Architectural Validation', function() {
             return callback(putError);
           }
           
-          durableStore.getDoc(doc.collection, doc.id, function(getError, result) {
-            if (getError && !hasError) {
-              hasError = true;
-              return callback(getError);
-            }
-            
+          durableStore.getDoc(doc.collection, doc.id, function(error, result) {
+            expect(error).to.not.exist;
             expect(result).to.exist;
             completedOps++;
             callback(null);

@@ -50,7 +50,7 @@ describe('IndexedDbStorage', function() {
         debug: false
       });
       
-      storage.initialize(function(inventory) {
+      storage.initialize(function(err, inventory) {
         expect(inventory).to.exist;
         expect(inventory.id).to.equal('inventory');
         expect(inventory.payload).to.exist;
@@ -67,7 +67,7 @@ describe('IndexedDbStorage', function() {
         debug: false
       });
       
-      storage.initialize(function(inventory) {
+      storage.initialize(function(err, inventory) {
         expect(storage.dbName).to.equal('sharedb_' + customNamespace);
         expect(storage.namespace).to.equal(customNamespace);
         done();
@@ -113,7 +113,7 @@ describe('IndexedDbStorage', function() {
       };
       
       storage.writeRecords({ docs: [docRecord] }, function() {
-        storage.readRecord('docs', 'doc1', function(payload) {
+        storage.readRecord('docs', 'doc1', function(err, payload) {
           expect(payload).to.deep.equal(docRecord.payload);
           done();
         });
@@ -128,7 +128,7 @@ describe('IndexedDbStorage', function() {
       ];
       
       storage.writeRecords({ docs: docs }, function() {
-        storage.readAllRecords('docs', function(records) {
+        storage.readAllRecords('docs', function(err, records) {
           expect(records).to.have.lengthOf(3);
           expect(records.map(function(r) { return r.id; }).sort()).to.deep.equal(['doc1', 'doc2', 'doc3']);
           done();
@@ -142,7 +142,7 @@ describe('IndexedDbStorage', function() {
       
       storage.writeRecords({ docs: [original] }, function() {
         storage.writeRecords({ docs: [updated] }, function() {
-          storage.readRecord('docs', 'doc1', function(payload) {
+          storage.readRecord('docs', 'doc1', function(err, payload) {
             expect(payload.title).to.equal('Updated');
             expect(payload.version).to.equal(2);
             done();
@@ -156,7 +156,7 @@ describe('IndexedDbStorage', function() {
       
       storage.writeRecords({ docs: [doc] }, function() {
         storage.deleteRecord('docs', 'doc1', function() {
-          storage.readRecord('docs', 'doc1', function(payload) {
+          storage.readRecord('docs', 'doc1', function(err, payload) {
             expect(payload).to.be.null;
             done();
           });
@@ -218,7 +218,7 @@ describe('IndexedDbStorage', function() {
       };
       
       storage.writeRecords({ meta: inventory }, function() {
-        storage.readRecord('meta', 'inventory', function(payload) {
+        storage.readRecord('meta', 'inventory', function(err, payload) {
           expect(payload.collections.posts).to.exist;
           expect(payload.collections.posts.post1).to.equal(1);
           expect(payload.collections.posts.post2).to.equal(2);
@@ -266,7 +266,7 @@ describe('IndexedDbStorage', function() {
         
         storage.writeRecords({ docs: [secretDoc] }, function() {
           // Read it back - should be decrypted automatically
-          storage.readRecord('docs', 'secret1', function(payload) {
+          storage.readRecord('docs', 'secret1', function(err, payload) {
             expect(payload).to.deep.equal(secretDoc.payload);
             
             // Verify it's actually encrypted in storage
@@ -341,7 +341,7 @@ describe('IndexedDbStorage', function() {
     });
     
     it('should handle reading non-existent records', function(done) {
-      storage.readRecord('docs', 'non-existent', function(payload) {
+      storage.readRecord('docs', 'non-existent', function(err, payload) {
         expect(payload).to.be.null;
         done();
       });
@@ -380,7 +380,7 @@ describe('IndexedDbStorage', function() {
       }
       
       storage.writeRecords({ docs: docs }, function() {
-        storage.readAllRecords('docs', function(records) {
+        storage.readAllRecords('docs', function(err, records) {
           expect(records).to.have.lengthOf(10);
           done();
         });
@@ -407,11 +407,11 @@ describe('IndexedDbStorage', function() {
       
       storage.writeRecords({ docs: docs }, function() {
         storage.clearStore('docs', function() {
-          storage.readAllRecords('docs', function(records) {
+          storage.readAllRecords('docs', function(err, records) {
             expect(records).to.have.lengthOf(0);
             
             // Meta should still exist
-            storage.readRecord('meta', 'inventory', function(inventory) {
+            storage.readRecord('meta', 'inventory', function(err, inventory) {
               expect(inventory).to.exist;
               done();
             });
@@ -433,7 +433,7 @@ describe('IndexedDbStorage', function() {
               expect(settings).to.be.null;
               
               // Inventory should be restored
-              storage.readRecord('meta', 'inventory', function(inventory) {
+              storage.readRecord('meta', 'inventory', function(err, inventory) {
                 expect(inventory).to.exist;
                 expect(inventory.collections).to.deep.equal({});
                 done();

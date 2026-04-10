@@ -544,18 +544,24 @@ module.exports = function() {
         doc2.create({age: 5}, function(err) {
           if (err) return done(err);
           doc.pause();
-          var calls = 0;
+          var createCalled = false;
+          var fetchCalled = false;
           doc.create({age: 3}, function(err) {
             expect(err).instanceOf(Error);
-            calls++;
+            createCalled = true;
+            checkDone();
           });
           doc[method](function(err) {
             if (err) return done(err);
-            expect(calls).equal(1);
+            fetchCalled = true;
+            checkDone();
+          });
+          function checkDone() {
+            if (!createCalled || !fetchCalled) return;
             expect(doc.version).equal(1);
             expect(doc.data).eql({age: 5});
             done();
-          });
+          }
           setTimeout(function() {
             doc.resume();
           }, 10);

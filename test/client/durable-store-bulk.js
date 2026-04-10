@@ -165,7 +165,7 @@ describe('DurableStore Bulk Operations', function() {
       storage.readRecordsBulk = function(storeName, ids, callback) {
         callback(new Error('Mock storage error'));
       };
-      
+
       durableStore.retrieveDocumentsBulk('testCollection', ['doc0'], function(err, docDatas) {
         expect(err).to.be.an('error');
         expect(err.message).to.equal('Mock storage error');

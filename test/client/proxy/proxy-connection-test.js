@@ -48,7 +48,7 @@ describe('ProxyConnection', function() {
       expect(connection.state).to.equal('connecting');
       expect(connection.canSend).to.be.false;
       expect(connection.collections).to.be.an('object');
-      expect(connection._messageBroker).to.be.an('instanceof', MessageBroker);
+      expect(connection._messageBroker).to.be.an.instanceof(MessageBroker);
     });
     
     it('should initialize with custom options', function() {
@@ -249,37 +249,32 @@ describe('ProxyConnection', function() {
       connection = new ProxyConnection();
     });
     
-    it('should send putDoc message', function(done) {
+    it('should send putDoc message', function() {
       var doc = connection.get('posts', 'doc1');
-      
-      connection.putDoc(doc, function(error) {
-        // Callback handling would be tested with full integration
-        done();
-      });
-      
+
+      connection.putDoc(doc, function() {});
+
       var channel = connection._messageBroker._channel;
       var message = channel._messages.find(function(msg) {
         return msg.type === 'connection.putDoc';
       });
-      
+
       expect(message).to.exist;
       expect(message.collection).to.equal('posts');
       expect(message.id).to.equal('doc1');
     });
-    
-    it('should send putDocs message', function(done) {
+
+    it('should send putDocs message', function() {
       var doc1 = connection.get('posts', 'doc1');
       var doc2 = connection.get('posts', 'doc2');
-      
-      connection.putDocs([doc1, doc2], function(error) {
-        done();
-      });
-      
+
+      connection.putDocs([doc1, doc2], function() {});
+
       var channel = connection._messageBroker._channel;
       var message = channel._messages.find(function(msg) {
         return msg.type === 'connection.putDocs';
       });
-      
+
       expect(message).to.exist;
       expect(message.docs).to.have.length(2);
       expect(message.docs[0].collection).to.equal('posts');
@@ -304,18 +299,22 @@ describe('ProxyConnection', function() {
     });
     
     it('should handle connection state changes', function(done) {
-      connection.on('state', function(state, reason) {
-        expect(state).to.equal('connected');
-        expect(reason).to.equal('WebSocket ready');
-        expect(connection.state).to.equal('connected');
-        expect(connection.canSend).to.be.true;
-        done();
-      });
-      
-      // Simulate connection event from SharedWorker
-      connection._handleConnectionEvent({
-        event: 'state',
-        args: ['connected', 'WebSocket ready']
+      // Wait for broker ready first, then test SharedWorker state event
+      connection._messageBroker.on('ready', function() {
+        connection.on('state', function(state, reason) {
+          if (reason === 'WebSocket ready') {
+            expect(state).to.equal('connected');
+            expect(connection.state).to.equal('connected');
+            expect(connection.canSend).to.be.true;
+            done();
+          }
+        });
+
+        // Simulate connection event from SharedWorker
+        connection._handleConnectionEvent({
+          event: 'state',
+          args: ['connected', 'WebSocket ready']
+        });
       });
     });
     
@@ -385,29 +384,34 @@ describe('ProxyConnection', function() {
     
     it('should clean up resources on close', function(done) {
       connection.get('posts', 'doc1');
-      
+
       expect(connection.state).to.not.equal('closed');
       expect(Object.keys(connection.collections)).to.have.length(1);
-      
+
       connection.on('state', function(state) {
         if (state === 'closed') {
           expect(connection.canSend).to.be.false;
           expect(connection.collections).to.deep.equal({});
+          // Prevent afterEach from closing again
+          connection = null;
           done();
         }
       });
-      
+
       connection.close();
     });
-    
+
     it('should send unregister message on close', function() {
-      connection.close();
-      
       var channel = connection._messageBroker._channel;
+
+      connection.close();
+      // Prevent afterEach from closing again
+      connection = null;
+
       var message = channel._messages.find(function(msg) {
         return msg.type === 'tab.unregister';
       });
-      
+
       expect(message).to.exist;
     });
   });

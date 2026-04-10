@@ -16,7 +16,7 @@
     "@sharesync/rich-text": "^5.0.2",
     "chai": "^4.3.7",
     "coveralls": "^3.1.1",
-    "fake-indexeddb": "^6.1.0",
+    "fake-indexeddb": "^6.2.5",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "ot-json0-v2": "https://github.com/ottypes/json0#90a3ae26364c4fa3b19b6df34dad46707a704421",

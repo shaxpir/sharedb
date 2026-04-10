@@ -101,7 +101,7 @@ describe('DurableStore', function() {
   });
 
   it('persists Docs', function(done) {
-    connection.durableStore.getDoc('books', 'book_1', function(record) {
+    connection.durableStore.getDoc('books', 'book_1', function(error, record) {
       expect(record.data).to.deep.equal({title: 'Dune', body_text: ''});
       expect(record.version).to.equal(1);
       done();

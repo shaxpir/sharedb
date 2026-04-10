@@ -5,3 +5,9 @@ file: test/setup.js
 ignore: 'test/browser/*'
 globals:
 - MessageChannel # Set/unset to test nextTick()
+- BroadcastChannel # Mocked in proxy tests
+- SharedWorker # Mocked in proxy tests
+- window # Mocked in proxy tests
+- navigator # Mocked in proxy tests
+- Blob # Mocked in proxy tests
+- URL # Mocked in proxy tests

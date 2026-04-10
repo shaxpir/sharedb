@@ -17,7 +17,7 @@ describe('SnapshotTimestampRequest', function() {
   var ONE_DAY = 1000 * 60 * 60 * 24;
 
   beforeEach(function() {
-    clock = sinon.useFakeTimers(day1);
+    clock = sinon.useFakeTimers({now: day1, toFake: ['Date']});
     backend = new Backend();
   });
 

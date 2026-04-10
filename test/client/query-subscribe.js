@@ -517,7 +517,7 @@ function commonTests(options) {
   });
 
   it('pollDebounce option reduces subsequent poll interval', function(done) {
-    var clock = sinon.useFakeTimers();
+    var clock = sinon.useFakeTimers({shouldAdvanceTime: true});
     var connection = this.backend.connect();
     this.backend.db.canPollDoc = function() {
       return false;
@@ -566,7 +566,7 @@ function commonTests(options) {
   });
 
   it('db.pollDebounce option reduces subsequent poll interval', function(done) {
-    var clock = sinon.useFakeTimers();
+    var clock = sinon.useFakeTimers({shouldAdvanceTime: true});
     var connection = this.backend.connect();
     this.backend.db.canPollDoc = function() {
       return false;
@@ -616,7 +616,7 @@ function commonTests(options) {
   });
 
   it('pollInterval updates a subscribed query after an unpublished create', function(done) {
-    var clock = sinon.useFakeTimers();
+    var clock = sinon.useFakeTimers({shouldAdvanceTime: true});
     var connection = this.backend.connect();
     this.backend.suppressPublish = true;
     var query = connection.createSubscribeQuery(
@@ -638,7 +638,7 @@ function commonTests(options) {
   });
 
   it('db.pollInterval updates a subscribed query after an unpublished create', function(done) {
-    var clock = sinon.useFakeTimers();
+    var clock = sinon.useFakeTimers({shouldAdvanceTime: true});
     var connection = this.backend.connect();
     this.backend.suppressPublish = true;
     this.backend.db.pollDebounce = 0;
@@ -657,7 +657,7 @@ function commonTests(options) {
   });
 
   it('pollInterval captures additional unpublished creates', function(done) {
-    var clock = sinon.useFakeTimers();
+    var clock = sinon.useFakeTimers({shouldAdvanceTime: true});
     var connection = this.backend.connect();
     this.backend.suppressPublish = true;
     var count = 0;
